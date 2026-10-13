@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js" data-lang="cn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TEAM JBYangC — 并肩开黑的普通玩家 | CS 娱乐向战队</title>
+<meta name="description" content="JBYangC 战队成立于 2024 年 11 月，是一支以 CS 系列游戏为核心的业余娱乐向战队。记录对局片段，留存组队游玩的点滴瞬间。">
+<meta name="theme-color" content="#05070d">
+<meta property="og:title" content="TEAM JBYangC — CS 娱乐向战队">
+<meta property="og:description" content="并肩开黑的普通玩家。轻松包容，拒绝内耗。">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- 环境背景：三层漂移光晕 + 细网格，纯装饰 -->
+<div class="ambient" aria-hidden="true">
+  <span class="ambient__glow ambient__glow--a"></span>
+  <span class="ambient__glow ambient__glow--b"></span>
+  <span class="ambient__glow ambient__glow--c"></span>
+  <span class="ambient__grid"></span>
+  <span class="ambient__vignette"></span>
+</div>
+
+<a class="skip-link" href="#main" data-i18n="a11y.skip">跳到主要内容</a>
+
+<!-- 导航由 main.js 注入 -->
+<header id="site-nav"></header>
+
+<main class="page" id="main">
+
+  <!-- ====================================================================
+       HERO
+       ==================================================================== -->
+  <section class="hero">
+    <div class="shell">
+      <div class="hero__inner">
+
+        <div class="hero__text">
+          <div class="hero__badge reveal">
+            <span class="hero__dot" aria-hidden="true"></span>
+            <b>EST. 2024.11</b>
+            <span data-i18n="hero.badge">CS 娱乐向战队 · 招募同好中</span>
+          </div>
+
+          <h1 class="hero__title">
+            <span class="grad-text reveal" style="--d:60ms">JBYangC</span>
+            <span class="line-2 reveal" style="--d:160ms" data-i18n="hero.subtitle">并肩开黑的普通玩家</span>
+          </h1>
+
+          <p class="hero__lead reveal" style="--d:240ms" data-i18n="hero.lead">
+            我们不是职业队。只是一群人因为CS而聚在一起，记录对局、留存片段，
+            在胜负之外把并肩作战这件事本身当成目的。
+          </p>
+
+          <div class="btn-row reveal" style="--d:320ms">
+            <a class="btn btn--primary" href="players.html">
+              <span data-i18n="hero.ctaRoster">认识我们的队员</span>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn btn--ghost" href="about.html" data-i18n="hero.ctaAbout">战队介绍</a>
+          </div>
+
+          <div class="hero__stats reveal" style="--d:400ms">
+            <div class="stat">
+              <div class="stat__num grad-text"><span data-count="7">0</span></div>
+              <div class="stat__label" data-i18n="hero.statPlayers">在册队员</div>
+            </div>
+            <div class="stat">
+              <div class="stat__num grad-text"><span data-count="2024">0</span></div>
+              <div class="stat__label" data-i18n="hero.statFounded">建队年份</div>
+            </div>
+            <div class="stat">
+              <div class="stat__num grad-text"><span data-count="100">0</span>%</div>
+              <div class="stat__label" data-i18n="hero.statVibe">娱乐局占比</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 徽章展示：旋转渐变光环 + 缓慢浮动 + 底部呼吸光斑 -->
+        <div class="hero__crest reveal reveal--scale" style="--d:200ms" data-fallback-holder>
+          <span class="hero__ring" aria-hidden="true"></span>
+          <span class="hero__ring hero__ring--inner" aria-hidden="true"></span>
+          <!-- 这里刻意不写 src：空 src 会立刻触发一次加载失败，
+               被图片兜底逻辑判定为坏图并隐藏，之后脚本再赋有效地址也显示不出来。
+               地址完全由 renderCrest() 负责设置。 -->
+          <img class="hero__crest-img" id="hero-crest" alt="TEAM JBYangC 队徽" decoding="async">
+          <span class="hero__initial" hidden></span>
+        </div>
+
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">
+      <span data-i18n="hero.scroll">Scroll</span>
+      <span class="scroll-hint__line"></span>
+    </div>
+  </section>
+
+  <!-- 关键词跑马灯 -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span class="marquee__item">TEAM JBYangC</span>
+      <span class="marquee__item">COUNTER-STRIKE</span>
+      <span class="marquee__item">EST. 2024.11</span>
+      <span class="marquee__item" data-i18n="mq.tagline">CASUAL BUT SERIOUS</span>
+      <span class="marquee__item" data-i18n="mq.noBurnout">拒绝内耗</span>
+      <span class="marquee__item" data-i18n="mq.together">并肩作战</span>
+      <span class="marquee__item" data-i18n="mq.founded">建队于 2024 年 11 月</span>
+      <span class="marquee__item" data-i18n="mq.noToxicity">NO TOXICITY</span>
+      <span class="marquee__item" data-i18n="mq.archive">娱乐向 · 正式记录</span>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       我们是什么样的队伍
+       ==================================================================== -->
+  <section class="section">
+    <div class="shell">
+      <div class="section__head">
+        <div class="eyebrow reveal" data-i18n="home.whoEyebrow">What we are</div>
+        <h2 class="section__title reveal" style="--d:80ms" data-i18n="home.whoTitle">
+          一支把过程看得比排名更重的队伍
+        </h2>
+        <p class="section__lede reveal" style="--d:160ms" data-i18n="home.whoLede">
+          我们尊重游戏竞技本身，但不以竞技排名与赛事成绩作为核心目标。
+          技术水平参差不齐是常态，协作氛围与开黑过程的乐趣才是我们真正在维护的东西。
+        </p>
+      </div>
+
+      <div class="grid grid--3" data-stagger="110">
+        <article class="card reveal">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
+          </div>
+          <h3 class="card__title" data-i18n="home.v1t">轻松包容</h3>
+          <p class="card__text" data-i18n="home.v1d">
+            欢迎所有热爱 CS 的同好。水平不是门槛，愿意好好说话、好好配合才是。
+            新人进来不会被审判，失误了也不会被挂起来。
+          </p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="card__title" data-i18n="home.v2t">拒绝内耗</h3>
+          <p class="card__text" data-i18n="home.v2d">
+            不开压力局、不做复盘审判、不把一局游戏的胜负带到下一局。
+            对枪输了就下一把，语音里留住的是笑声而不是火气。
+          </p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+          </div>
+          <h3 class="card__title" data-i18n="home.v3t">认真留存</h3>
+          <p class="card__text" data-i18n="home.v3d">
+            我们把队内对局片段、入场动画、印花与签名都整理归档。
+            打得好不好另说，这些一起玩过的痕迹值得留下来。
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       队员一览
+       ==================================================================== -->
+  <section class="section section--divide">
+    <div class="shell">
+      <div class="section__head">
+        <div class="eyebrow reveal" data-i18n="home.rosterEyebrow">Roster</div>
+        <h2 class="section__title reveal" style="--d:80ms" data-i18n="home.rosterTitle">在册队员</h2>
+        <p class="section__lede reveal" style="--d:160ms" data-i18n="home.rosterLede">
+          七个人，位置有分工，责任没有高低。指挥负责把想法捏在一起，
+          突破手负责开门，狙击手负责定音，自由人负责补上缺的那块。
+        </p>
+      </div>
+
+      <div class="roster-grid" id="home-roster" data-stagger="70"></div>
+
+      <!-- 团队合影：放在队员名单下面，作为"这些人"的视觉落点 -->
+      <figure class="group-figure reveal reveal--scale" id="home-group">
+        <div class="group-figure__frame" id="home-group-frame"></div>
+        <figcaption class="group-figure__cap" data-i18n="home.groupCap">
+          TEAM JBYangC 核心成员
+        </figcaption>
+      </figure>
+
+      <div class="btn-row reveal" style="margin-top:42px">
+        <a class="btn btn--ghost" href="players.html">
+          <span data-i18n="home.rosterMore">查看完整阵容与个人资料</span>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       近期素材
+       ==================================================================== -->
+  <section class="section section--divide">
+    <div class="shell">
+      <div class="section__head">
+        <div class="eyebrow reveal" data-i18n="home.mediaEyebrow">From the archive</div>
+        <h2 class="section__title reveal" style="--d:80ms" data-i18n="home.mediaTitle">队内素材</h2>
+        <p class="section__lede reveal" style="--d:160ms" data-i18n="home.mediaLede">
+          队徽动态、入场动画、队服与印花，都收在素材库里。
+          视频进入视口才会加载，不会拖慢页面。
+        </p>
+      </div>
+
+      <div class="video-grid" data-stagger="120">
+        <div class="video-card video-card--crest reveal reveal--scale">
+          <div class="video-card__frame">
+            <video id="home-v-crest" muted loop playsinline preload="none" data-lazy data-autoplay></video>
+          </div>
+          <div class="video-card__info">
+            <div class="video-card__title" data-i18n="home.mediaV1">队徽动画</div>
+            <div class="video-card__note" data-i18n="home.mediaV1n">队徽展示</div>
+          </div>
+        </div>
+
+        <div class="video-card reveal reveal--scale">
+          <div class="video-card__frame">
+            <video id="home-v-entry" muted loop playsinline preload="none" data-lazy data-autoplay></video>
+          </div>
+          <div class="video-card__info">
+            <div class="video-card__title" data-i18n="home.mediaV2">队员入场动画</div>
+            <div class="video-card__note" data-i18n="home.mediaV2n">队员入场动画</div>
+          </div>
+        </div>
+
+        <div class="card reveal reveal--scale" style="display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <h3 class="card__title" data-i18n="home.mediaTitleCard">图片素材</h3>
+            <p class="card__text" data-i18n="home.mediaCardText">
+              队徽各版本、队服、贴纸、印花与签名，共三十余件素材，全部整理在素材库中。
+            </p>
+          </div>
+          <div class="btn-row" style="margin-top:26px">
+            <a class="btn btn--ghost" href="media.html" data-i18n="home.mediaCta">进入素材库</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       关注我们
+       ==================================================================== -->
+  <section class="section section--divide">
+    <div class="shell">
+      <div class="card reveal reveal--scale" style="padding:56px 44px;text-align:center;overflow:hidden">
+        <div class="section__head section__head--center" style="margin-bottom:30px">
+          <div class="eyebrow" data-i18n="home.followEyebrow">Follow us</div>
+          <h2 class="section__title" data-i18n="home.followTitle">在 B 站关注我们</h2>
+          <p class="section__lede" data-i18n="home.followLede">
+            队内对局片段、入场动画与新素材都发在 B 站。目前我们只运营这一个频道，
+            想看到更新在这里关注就够了。
+          </p>
+        </div>
+        <div class="btn-row" style="justify-content:center">
+          <a class="btn btn--primary" id="home-bili" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="M16 10.5l6-3.5v10l-6-3.5z"/></svg>
+            <span data-i18n="home.followCta">前往 B 站频道</span>
+          </a>
+          <a class="btn btn--ghost" href="follow.html" data-i18n="home.followMore">查看关注方式</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 页脚由 main.js 注入 -->
+<footer id="site-footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+/* --------------------------------------------------------------------------
+   首页专属渲染 / Home page rendering
+   -------------------------------------------------------------------------- */
+(function () {
+  'use strict';
+
+  var JB = window.JB;
+
+  /* 队长优先，其余保持名单顺序 —— 让队长出现在第一张卡 */
+  function orderedRoster() {
+    var list = JB.ROSTER.slice();
+    list.sort(function (a, b) {
+      if (!!b.captain - !!a.captain) return (!!b.captain ? 1 : 0) - (!!a.captain ? 1 : 0);
+      return 0;
+    });
+    return list;
+  }
+
+  function renderRoster() {
+    var host = document.getElementById('home-roster');
+    if (!host) return;
+    host.innerHTML = orderedRoster().map(JB_UI.playerCardHTML).join('');
+    /* 卡片里的照片要挂降级链，否则某张图缺失就直接空白 */
+    JB_UI.initImageChains();
+    if (JB_UI.reveal) JB_UI.reveal();
+  }
+
+  /* 主徽章：优先用彩色版，缺失则回退到简洁抠图 / 黑白 / 单色 */
+  function renderCrest() {
+    var img = document.getElementById('hero-crest');
+    if (!img) return;
+    var chain = [JB.CREST.color, JB.CREST.colorOpaque, JB.CREST.simpleCutout, JB.CREST.monoCutout];
+    var i = 0;
+
+    var holder = img.closest('[data-fallback-holder]');
+    var initial = holder && holder.querySelector('.hero__initial');
+
+    /* 占位文字平时保持 hidden，只有所有候选都失败时才露出来，
+       否则它会叠在队徽上方挡住图案。 */
+    function prepareInitial() {
+      if (!initial) return;
+      initial.textContent = 'JBYC';
+      initial.className = 'hero__initial grad-text';
+      initial.style.cssText =
+        'display:grid;place-items:center;position:absolute;inset:0;z-index:2;' +
+        'font-family:var(--font-mono);font-size:clamp(48px,10vw,104px);font-weight:800;' +
+        'letter-spacing:-.04em;opacity:.55';
+    }
+    /* 注意：prepareInitial 里给占位文字设了内联 display，
+       内联样式会盖过 [hidden] 的浏览器默认规则，光靠 hidden 属性挡不住，
+       占位文字会一直压在队徽上面。所以这里必须直接控制 display。 */
+    function hideInitial() {
+      if (!initial) return;
+      initial.setAttribute('hidden', '');
+      initial.style.display = 'none';
+    }
+    function showInitial() {
+      if (!initial) return;
+      initial.removeAttribute('hidden');
+      initial.style.display = 'grid';
+    }
+
+    img.addEventListener('error', function () {
+      i += 1;
+      if (i < chain.length) {
+        /* 换地址前先复原：捕获阶段的通用兜底可能已把这张图隐藏 */
+        JB_UI.resetImage(img);
+        img.src = chain[i];
+        return;
+      }
+      /* 所有候选都失败：隐藏图片，改用队名缩写占位 */
+      img.style.display = 'none';
+      prepareInitial();
+      showInitial();
+    });
+
+    img.addEventListener('load', hideInitial);
+
+    prepareInitial();
+    hideInitial();
+    /* 赋值前先清掉可能残留的隐藏状态，确保首屏一定看得见 */
+    JB_UI.resetImage(img);
+    img.src = chain[0];
+  }
+
+  function renderVideos() {
+    var a = document.getElementById('home-v-crest');
+    if (a) a.src = JB.CREST.anim1;                      // 队徽动画其一，体量最小
+    var b = document.getElementById('home-v-entry');
+    if (b) b.src = JB.MEDIA.entryAnimations[0].src;     // 无声小版
+  }
+
+  /* 团队合影：整幅展示，不裁切 */
+  function renderGroup() {
+    var host = document.getElementById('home-group-frame');
+    if (!host) return;
+    var g = JB.MEDIA.groupPhoto;
+    if (!g || !g.src) {
+      var fig = document.getElementById('home-group');
+      if (fig) fig.hidden = true;
+      return;
+    }
+    host.innerHTML =
+      '<img src="' + g.src + '" alt="' + JB_UI.pick(g.title) + '"' +
+      ' data-lightbox="true" data-lightbox-cap="' + JB_UI.pick(g.title) + '"' +
+      ' loading="lazy" decoding="async">';
+  }
+
+  /* B 站按钮的地址直接取自数据层，改 data.js 不用回来改这里 */
+  function renderBili() {
+    var a = document.getElementById('home-bili');
+    if (!a) return;
+    var c = JB.CONTACT.filter(function (x) { return x.key === 'bilibili'; })[0];
+    if (c && c.href) a.href = c.href;
+  }
+
+  /* 双语：主徽章 alt、无障碍链接 */
+  window.JB_I18N = window.JB_I18N || {};
+  Object.assign(window.JB_I18N, {
+    'a11y.skip': { cn: '跳到主要内容', en: 'Skip to main content' },
+
+    'hero.badge': { cn: 'CS娱乐向战队 · 招募同好中', en: 'Casual CS team · open to new players' },
+    'hero.subtitle': { cn: '并肩开黑的普通玩家', en: 'Ordinary players, in it together' },
+    'hero.lead': {
+      cn: '我们不是职业队。一群人因为喜欢 CS 聚在一起，记录对局、留存片段，在胜负之外把并肩作战这件事本身当成目的。',
+      en: 'We are not a pro team. A group of people who like CS, recording our games and keeping the clips — treating the act of playing side by side as the point, not just the score.'
+    },
+    'hero.ctaRoster': { cn: '认识我们的队员', en: 'Meet the roster' },
+    'hero.ctaAbout': { cn: '战队介绍', en: 'About the team' },
+    'hero.statPlayers': { cn: '在册队员', en: 'Players' },
+    'hero.statFounded': { cn: '建队年份', en: 'Founded' },
+    'hero.statVibe': { cn: '娱乐局占比', en: 'For-fun games' },
+    'hero.scroll': { cn: '向下', en: 'Scroll' },
+
+    'home.whoEyebrow': { cn: 'What we are', en: 'What we are' },
+    'home.whoTitle': { cn: '一支把过程看得比排名更重的队伍', en: 'A team that values the process over the ranking' },
+    'home.whoLede': {
+      cn: '我们尊重游戏竞技本身，但不以竞技排名与赛事成绩作为核心目标。技术水平参差不齐是常态，协作氛围与开黑过程的乐趣才是我们真正在维护的东西。',
+      en: 'We respect the competitive side of the game, but rankings and results are not the goal. Uneven skill is normal here; what we actually maintain is the atmosphere and the fun of playing together.'
+    },
+    'home.v1t': { cn: '轻松包容', en: 'Easy-going' },
+    'home.v1d': {
+      cn: '欢迎所有热爱 CS 的同好。水平不是门槛，愿意好好说话、好好配合才是。新人进来不会被审判，失误了也不会被挂起来。',
+      en: 'Anyone who loves CS is welcome. Skill is not the bar — being decent and willing to play as a team is. New players are not put on trial for a mistake.'
+    },
+    'home.v2t': { cn: '拒绝内耗', en: 'No burnout' },
+    'home.v2d': {
+      cn: '不开压力局、不做复盘审判、不把一局游戏的胜负带到下一局。对枪输了就下一把，语音里留住的是笑声而不是火气。',
+      en: 'No pressure games, no post-round tribunals, no carrying a loss into the next match. Lose the duel, go again — the voice chat keeps the laughter, not the anger.'
+    },
+    'home.v3t': { cn: '认真留存', en: 'Kept properly' },
+    'home.v3d': {
+      cn: '我们把队内对局片段、入场动画、印花与签名都整理归档。打得好不好另说，这些一起玩过的痕迹值得留下来。',
+      en: 'Clips, entry animations, stickers and signatures are all archived here. Whatever the scoreboard said, the traces of playing together are worth keeping.'
+    },
+
+    'home.rosterEyebrow': { cn: 'Roster', en: 'Roster' },
+    'home.rosterTitle': { cn: '在册队员', en: 'The roster' },
+    'home.rosterLede': {
+      cn: '七个人，位置有分工，责任没有高低。指挥负责把想法捏在一起，突破手负责开门，狙击手负责定音，自由人负责补上缺的那块。',
+      en: 'Seven players. Roles differ, responsibility does not. The IGL holds the plan together, the entry fraggers open the site, the AWPer settles the round, the free agents fill the gap.'
+    },
+    'home.rosterMore': { cn: '查看完整阵容与个人资料', en: 'See full roster and profiles' },
+    'home.groupCap': { cn: 'TEAM JBYangC 核心成员', en: 'TEAM JBYangC — core members' },
+
+    'home.mediaEyebrow': { cn: 'From the archive', en: 'From the archive' },
+    'home.mediaTitle': { cn: '队内素材', en: 'From our archive' },
+    'home.mediaLede': {
+      cn: '队徽动态、入场动画、队服、合影与印花，都收在素材库里。视频进入视口才会加载，不会拖慢页面。',
+      en: 'Crest animations, the entry sequence, the jersey, the team photo and player stickers all live in the media library. Videos load only when they scroll into view.'
+    },
+    'home.mediaV1': { cn: '队徽动画', en: 'Crest Animation' },
+    'home.mediaV1n': { cn: '循环播放 · 静音', en: 'Loop · muted' },
+    'home.mediaV2': { cn: '入场动画', en: 'Entry Animation' },
+    'home.mediaV2n': { cn: '轻量版 · 无声', en: 'Lite version · silent' },
+    'home.mediaTitleCard': { cn: '图片素材', en: 'Still assets' },
+    'home.mediaCardText': {
+      cn: '队徽各版本、队服、合影、选手印花与签名，全部整理在素材库中。',
+      en: 'Every crest variant, the jersey, the team photo, player stickers and signatures — all catalogued in the media library.'
+    },
+    'home.mediaCta': { cn: '进入素材库', en: 'Open the media library' },
+
+    'home.followEyebrow': { cn: 'Follow us', en: 'Follow us' },
+    'home.followTitle': { cn: '在 B 站关注我们', en: 'Follow us on Bilibili' },
+    'home.followLede': {
+      cn: '队内对局片段、入场动画与新素材都发在 B 站。目前我们只运营这一个频道，想看到更新在这里关注就够了。',
+      en: 'Match clips, entry animations and new assets all go up on Bilibili. It is the only channel we run, so following there is enough to keep up.'
+    },
+    'home.followCta': { cn: '前往 B 站频道', en: 'Open the Bilibili channel' },
+    'home.followMore': { cn: '查看关注方式', en: 'How to follow' },
+
+    /* 跑马灯关键词 */
+    'mq.tagline': { cn: '娱乐但认真', en: 'Casual but serious' },
+    'mq.noBurnout': { cn: '拒绝内耗', en: 'No burnout' },
+    'mq.together': { cn: '并肩作战', en: 'In it together' },
+    'mq.founded': { cn: '建队于 2024 年 11 月', en: 'Founded November 2024' },
+    'mq.noToxicity': { cn: '不骂队友', en: 'No toxicity' },
+    'mq.archive': { cn: '娱乐向 · 正式记录', en: 'For fun, properly recorded' }
+  });
+
+  /* data.js / main.js 已同步加载，DOM 也已就绪，可直接渲染 */
+  renderCrest();
+  renderVideos();
+  renderBili();
+  renderGroup();
+  window.JB_onLang = window.JB_onLang || [];
+  renderRoster();
+
+  /* 切换语言后重建选手卡（卡片内的位置文字需要跟着换） */
+  window.JB_onLang.push(function () {
+    renderRoster();
+    var img = document.getElementById('hero-crest');
+    if (img) img.alt = JB_UI.pick({ cn: 'TEAM JBYangC 队徽', en: 'TEAM JBYangC crest' });
+  });
+  /* 首帧跑一次，保证静态 data-i18n 也同步到当前语言 */
+  if (window.JB_applyLang) window.JB_applyLang(window.JB_lang());
+})();
+</script>
+</body>
+</html>

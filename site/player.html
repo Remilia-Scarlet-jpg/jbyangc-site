@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js" data-lang="cn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>选手资料 | TEAM JBYangC</title>
+<meta name="description" content="TEAM JBYangC 队员个人资料：位置分工、印花与签名素材。">
+<meta name="theme-color" content="#05070d">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <span class="ambient__glow ambient__glow--a"></span>
+  <span class="ambient__glow ambient__glow--b"></span>
+  <span class="ambient__glow ambient__glow--c"></span>
+  <span class="ambient__grid"></span>
+  <span class="ambient__vignette"></span>
+</div>
+
+<a class="skip-link" href="#main" data-i18n="a11y.skip">跳到主要内容</a>
+<header id="site-nav"></header>
+
+<main class="page" id="main">
+  <section class="pd">
+    <div class="shell" id="pd-root">
+      <!-- 由脚本填充 -->
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  var JB = window.JB;
+
+  /* ---------------------------------------------------------------------
+     1. 解析 ?id= 参数，找不到就退回第一位队员并提示
+     --------------------------------------------------------------------- */
+  function param(name) {
+    var m = new RegExp('[?&]' + name + '=([^&]*)').exec(location.search);
+    return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
+  }
+
+  var wanted = param('id');
+  var index = -1;
+  JB.ROSTER.forEach(function (p, i) { if (p.id === wanted) index = i; });
+  var notFound = false;
+  if (index < 0) { index = 0; notFound = !!wanted; }
+
+  var player = JB.ROSTER[index];
+  var prev = JB.ROSTER[(index - 1 + JB.ROSTER.length) % JB.ROSTER.length];
+  var next = JB.ROSTER[(index + 1) % JB.ROSTER.length];
+
+  /* 徽章渐变主色，用于头像与标签 */
+  var accent = player.accent[0];
+
+  /* ---------------------------------------------------------------------
+     2. 头像回退链：照片 → 印花 → 首字母
+     --------------------------------------------------------------------- */
+  function portraitChain() {
+    var chain = (player.photos || []).slice();
+    if (player.sticker)   chain.push(player.sticker);
+    if (player.sticker2)  chain.push(player.sticker2);
+    return chain;
+  }
+
+  function portraitHTML() {
+    var chain = portraitChain();
+    var contain = !(player.photos && player.photos.length);
+    if (!chain.length) {
+      return '<div class="pd__portrait" data-fallback-holder>' +
+               '<span class="player__initial" style="position:static;display:grid">' +
+                 player.handle.charAt(0).toUpperCase() +
+               '</span>' +
+             '</div>';
+    }
+    return '<div class="pd__portrait' + (contain ? ' pd__portrait--contain' : '') + '" data-fallback-holder>' +
+             '<img id="pd-img" src="' + chain[0] + '" alt="' + player.handle + '"' +
+             ' data-img-chain="' + encodeURIComponent(JSON.stringify(chain)) + '"' +
+             ' decoding="async">' +
+           '</div>';
+  }
+
+  /* 头像全部候选都失败时，用首字母顶上，不留空白 */
+  function armPortraitFallback() {
+    var img = document.getElementById('pd-img');
+    if (!img) return;
+    JB_UI.initImageChains();
+    img.addEventListener('error', function () {
+      var holder = img.closest('.pd__portrait');
+      if (!holder || holder.querySelector('.player__initial')) return;
+      holder.classList.add('pd__portrait--contain');
+      holder.insertAdjacentHTML('afterbegin',
+        '<span class="player__initial" style="position:static;display:grid">' +
+        player.handle.charAt(0).toUpperCase() + '</span>');
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     3. 素材条：只列出真实存在的素材
+     --------------------------------------------------------------------- */
+  function assetTiles() {
+    var t = [];
+    if (player.sticker)    t.push({ src: player.sticker,   k: { cn: '印花', en: 'Sticker' } });
+    if (player.stickerT)   t.push({ src: player.stickerT,  k: { cn: '印花 · 透明底', en: 'Sticker · transparent' } });
+    if (player.sticker2)   t.push({ src: player.sticker2,  k: { cn: '贴纸 · 其二', en: 'Sticker · alternate' } });
+    if (player.sticker2026) t.push({ src: player.sticker2026, k: { cn: '印花 · 赛事版', en: 'Sticker · event edition' } });
+    if (player.signature)  t.push({ src: player.signature, k: { cn: '签名', en: 'Signature' } });
+    if (player.jersey)     t.push({ src: player.jersey,    k: { cn: '队服', en: 'Jersey' } });
+    if (player.idPhoto)    t.push({ src: player.idPhoto,   k: { cn: '证件照', en: 'ID photo' } });
+    return t;
+  }
+
+  /* ---------------------------------------------------------------------
+     3b. 平台战绩：环形评分 / 指标 / 雷达图 / 能力评级
+     ---------------------------------------------------------------------
+     数据全部来自 data.js 的 PLAYER_STATS，原样呈现，不补造缺失项。
+     雷达图的网格与数据多边形直接沿用参考卡片的坐标，
+     所以不同队员的轴数可能不同（8 / 6 / 5 轴）。
+     --------------------------------------------------------------------- */
+  var RING_LABEL = {
+    we:     { cn: 'WE 制胜评价', en: 'WE Rating' },
+    rating: { cn: 'Rating Pro',  en: 'Rating Pro' }
+  };
+  var METRIC_LABEL = {
+    matches: { cn: '赛季场次', en: 'Matches' },
+    winrate: { cn: '胜率',     en: 'Win rate' },
+    hs:      { cn: '爆头率',   en: 'HS%' },
+    adr:     { cn: 'ADR',      en: 'ADR' },
+    kd:      { cn: 'K/D',      en: 'K/D' },
+    rws:     { cn: 'RWS',      en: 'RWS' }
+  };
+  var ABILITY_LABEL = {
+    aim:     { cn: '枪法', en: 'Aim' },
+    trade:   { cn: '补枪', en: 'Trade' },
+    entry:   { cn: '突破', en: 'Entry' },
+    utility: { cn: '道具', en: 'Utility' },
+    clutch:  { cn: '残局', en: 'Clutch' },
+    awp:     { cn: '狙击', en: 'AWP' }
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  /* ---------------------------------------------------------------------
+     3c. 雷达图：由能力数据动态生成
+     ---------------------------------------------------------------------
+     参考卡片里的八边形网格是装饰性的：它画了 8 条轴，而能力只有 6 项，
+     轴与轴之间对不上任何指标，既不能标注也无法读数，
+     而且各人轴数还不统一（8 / 6 / 5）。
+
+     这里改成一条轴 = 一项能力、半径 = 该项百分比：
+     轴名、等级、数值都能标上去，读数一目了然，并且天然适配任意条目数。
+     原始坐标仍完整保留在 data.js 的 radarGrid / radar 字段里，随时可换回。
+     --------------------------------------------------------------------- */
+  var RADAR = { cx: 180, cy: 180, r: 96, labelGap: 26 };
+
+  function radarSVG(list) {
+    if (!list || list.length < 3) return '';
+    var cx = RADAR.cx, cy = RADAR.cy, R = RADAR.r, N = list.length;
+
+    /* 第 i 条轴：从正上方开始顺时针均分 */
+    function at(radius, i) {
+      var a = (i * 2 * Math.PI / N) - Math.PI / 2;
+      return [cx + radius * Math.cos(a), cy + radius * Math.sin(a)];
+    }
+    function ringPoints(radius) {
+      var out = [];
+      for (var i = 0; i < N; i++) {
+        var p = at(radius, i);
+        out.push(p[0].toFixed(1) + ',' + p[1].toFixed(1));
+      }
+      return out.join(' ');
+    }
+
+    /* 刻度环 */
+    var grid = [0.25, 0.5, 0.75, 1].map(function (f) {
+      return '<polygon class="radar__grid" points="' + ringPoints(R * f) + '"/>';
+    }).join('');
+
+    /* 径向轴线 */
+    var spokes = '';
+    for (var i = 0; i < N; i++) {
+      var e = at(R, i);
+      spokes += '<line class="radar__spoke" x1="' + cx + '" y1="' + cy +
+                '" x2="' + e[0].toFixed(1) + '" y2="' + e[1].toFixed(1) + '"/>';
+    }
+
+    /* 数据多边形 + 顶点 + 轴标签 */
+    var verts = [], dots = '', labels = '';
+    list.forEach(function (a, idx) {
+      var pct = Math.max(0, Math.min(100, Number(a.pct) || 0));
+      var g = String(a.grade || '').toUpperCase();
+      var p = at(Math.max(R * 0.1, R * pct / 100), idx);
+      verts.push(p[0].toFixed(1) + ',' + p[1].toFixed(1));
+      dots += '<circle class="radar__dot grade-fill--' + esc(g) + '" cx="' +
+              p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.6"/>';
+
+      var lp = at(R + RADAR.labelGap, idx);
+      var sin = Math.sin(idx * 2 * Math.PI / N);
+      var anchor = (Math.abs(sin) < 0.25) ? 'middle' : (sin > 0 ? 'start' : 'end');
+      var nm = JB_UI.pick(ABILITY_LABEL[a.k]) || a.k;
+      labels +=
+        '<text class="radar__axis" x="' + lp[0].toFixed(1) + '" y="' + lp[1].toFixed(1) +
+          '" text-anchor="' + anchor + '">' +
+          '<tspan x="' + lp[0].toFixed(1) + '" dy="0">' + esc(nm) + '</tspan>' +
+          '<tspan class="radar__axis-val grade--' + esc(g) + '" x="' + lp[0].toFixed(1) +
+            '" dy="14">' + pct + '<tspan class="radar__axis-unit">%</tspan></tspan>' +
+        '</text>';
+    });
+
+    return '<svg class="radar__svg" viewBox="0 0 360 360" role="img"' +
+             ' aria-label="' + esc(JB_UI.pick({ cn: '个人表现雷达图', en: 'Performance radar' })) + '">' +
+             '<defs>' +
+               '<linearGradient id="radarFill" x1="0" y1="0" x2="0" y2="1">' +
+                 '<stop class="radar__stop-a" offset="0%"/>' +
+                 '<stop class="radar__stop-b" offset="100%"/>' +
+               '</linearGradient>' +
+             '</defs>' +
+             grid + spokes +
+             '<polygon class="radar__data" points="' + verts.join(' ') + '"/>' +
+             dots + labels +
+           '</svg>';
+  }
+
+  function statsHTML() {
+    var head =
+      '<div class="section__head reveal" style="margin-bottom:22px">' +
+        '<div class="eyebrow" data-i18n="pd.statsEyebrow">Performance</div>' +
+        '<h2 class="section__title" style="font-size:clamp(22px,3vw,32px)" data-i18n="pd.statsTitle">平台战绩</h2>' +
+        '<p class="section__lede" data-i18n="pd.statsLede">数据取自完美平台，仅供队内参考。</p>' +
+      '</div>';
+
+    var st = (JB.PLAYER_STATS || {})[player.id];
+    if (!st) {
+      return head +
+        '<div class="hint-bar reveal" style="max-width:820px">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>' +
+          '<span>' + esc(JB_UI.pick({
+            cn: '这位队员暂时没有收录平台战绩。',
+            en: 'No platform stats recorded for this player yet.'
+          })) + '</span>' +
+        '</div>';
+    }
+
+    /* --- 头部：昵称 + 完美战力 + 赛季 / 当前 段位 --------------------- */
+    var nick = (st.nickname && st.nickname !== player.handle)
+      ? '<span class="stats-card__nick">' + esc(st.nickname) + '</span>' : '';
+    var power = (st.power == null)
+      ? '<span class="stats-card__power-v stats-card__power-v--none">—</span>'
+      : '<span class="stats-card__power-v">' + st.power + '</span>';
+
+    var ranks = ['season', 'current'].map(function (key) {
+      var r = st[key];
+      if (!r) return '';
+      var k = (key === 'season') ? { cn: '赛季', en: 'Season' } : { cn: '当前', en: 'Current' };
+      return '<div class="rank-chip">' +
+               '<span class="rank-chip__k">' + esc(JB_UI.pick(k)) + '</span>' +
+               '<span class="rank-chip__v">' + esc(r.rank) +
+                 (r.score != null ? ' <i>' + r.score + '</i>' : '') +
+               '</span>' +
+             '</div>';
+    }).join('');
+
+    /* --- 环形评分：半径 54，周长 339.292，dashoffset 决定填充比例 ----- */
+    var rings = (st.rings || []).map(function (r) {
+      var label = JB_UI.pick(RING_LABEL[r.k]) || r.k;
+      return '<div class="ring">' +
+               '<div class="ring__label">' + esc(label) + '</div>' +
+               '<svg class="ring__svg" viewBox="0 0 130 130" role="img"' +
+                 ' aria-label="' + esc(label + ' ' + r.value) + '">' +
+                 '<circle class="ring__track" cx="65" cy="65" r="54"/>' +
+                 '<circle class="ring__arc" cx="65" cy="65" r="54"' +
+                   ' transform="rotate(-90 65 65)"' +
+                   ' stroke-dasharray="339.292" style="--off:' + r.offset + '"/>' +
+                 '<text class="ring__num" x="65" y="72" text-anchor="middle">' + esc(r.value) + '</text>' +
+               '</svg>' +
+             '</div>';
+     }).join('');
+
+    /* --- 6 项指标：百分比类额外画一条细进度条 ------------------------ */
+    var metrics = (st.metrics || []).map(function (m) {
+      var label = JB_UI.pick(METRIC_LABEL[m.k]) || m.k;
+      var pctNum = /^([\d.]+)%$/.exec(m.v);
+      var bar = pctNum
+        ? '<div class="metric__bar"><i style="--w:' + pctNum[1] + '%"></i></div>'
+        : '';
+      return '<div class="metric">' +
+               '<div class="metric__k">' + esc(label) + '</div>' +
+               '<div class="metric__v' + (m.low ? ' metric__v--low' : '') + '">' + esc(m.v) + '</div>' +
+               bar +
+             '</div>';
+    }).join('');
+
+    /* --- 能力评级 --------------------------------------------------- */
+    var abilities = (st.abilities || []).map(function (a) {
+      var label = JB_UI.pick(ABILITY_LABEL[a.k]) || a.k;
+      var g = String(a.grade || '').toUpperCase();
+      var suffix = JB_UI.pick({ cn: '级', en: '' });
+      return '<div class="ability">' +
+               '<div class="ability__top">' +
+                 '<span class="ability__name">' + esc(label) + '</span>' +
+                 '<span class="ability__right">' +
+                   '<span class="ability__grade grade--' + esc(g) + '">' + esc(g + suffix) + '</span>' +
+                   '<span class="ability__pct">' + (a.pct || 0) + '</span>' +
+                 '</span>' +
+               '</div>' +
+               '<div class="ability__bar">' +
+                 '<i class="grade-bg--' + esc(g) + '" style="--w:' + (a.pct || 0) + '%"></i>' +
+               '</div>' +
+             '</div>';
+    }).join('');
+
+    var radar = radarSVG(st.abilities);
+
+    return head +
+      '<div class="stats-card reveal">' +
+        '<div class="stats-card__head">' +
+          '<div class="stats-card__who">' +
+            '<div class="stats-card__name">' + esc(player.handle) + nick + '</div>' +
+            '<div class="stats-card__power">' +
+              '<span class="stats-card__power-k">' + esc(JB_UI.pick({ cn: '完美战力', en: 'Perfect Power' })) + '</span>' +
+              power +
+            '</div>' +
+          '</div>' +
+          '<div class="stats-card__ranks">' + ranks + '</div>' +
+        '</div>' +
+        '<div class="stats-card__main">' +
+          '<div class="stats-card__block">' +
+            '<div class="block__title">' + esc(JB_UI.pick({ cn: '评分', en: 'Ratings' })) + '</div>' +
+            '<div class="rings">' + rings + '</div>' +
+          '</div>' +
+          '<div class="stats-card__block">' +
+            '<div class="block__title">' + esc(JB_UI.pick({ cn: '关键数据', en: 'Key figures' })) + '</div>' +
+            '<div class="metrics">' + metrics + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="stats-card__bottom">' +
+          '<div class="stats-card__block">' +
+            '<div class="block__title">' + esc(JB_UI.pick({ cn: '个人表现', en: 'Profile' })) + '</div>' +
+            radar +
+          '</div>' +
+          '<div class="stats-card__block">' +
+            '<div class="block__title">' + esc(JB_UI.pick({ cn: '能力评级', en: 'Abilities' })) + '</div>' +
+            '<div class="abilities">' + abilities + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="height:64px"></div>';
+  }
+
+  /* ---------------------------------------------------------------------
+     4. 页面骨架
+     --------------------------------------------------------------------- */
+  function build() {
+    var root = document.getElementById('pd-root');
+
+    var alias = JB_UI.pick(player.alias);
+    var role = JB_UI.pick(player.role);
+
+    var roles = [];
+    roles.push('<span class="chip chip--accent"><span class="chip__dot"></span>' + role + '</span>');
+    if (player.captain) roles.push('<span class="chip">' + JB_UI.pick({ cn: '队长 / 指挥', en: 'Captain / IGL' }) + '</span>');
+    if (player.founder) roles.push('<span class="chip">' + JB_UI.pick({ cn: '建队成员', en: 'Founding member' }) + '</span>');
+    roles.push('<span class="chip">' + JB_UI.pick({ cn: '入队 ' + player.since, en: 'Since ' + player.since }) + '</span>');
+
+    var tiles = assetTiles();
+
+    root.innerHTML = '' +
+      (notFound
+        ? '<div class="hint-bar" style="max-width:820px">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>' +
+            '<span>' + JB_UI.pick({
+              cn: '未找到该队员 ID，已为你显示名单中的第一位。',
+              en: 'No player matches that ID, so the first player on the roster is shown instead.'
+            }) + '</span>' +
+          '</div>'
+        : '') +
+
+      '<div class="pd__top">' +
+        '<div class="reveal reveal--scale">' + portraitHTML() + '</div>' +
+        '<div>' +
+          '<div class="eyebrow reveal" data-i18n="pd.eyebrow">Player profile</div>' +
+          '<h1 class="pd__name reveal grad-text" style="--d:60ms">' + player.handle + '</h1>' +
+          (alias ? '<p class="player__alias reveal" style="--d:100ms;font-size:15px;margin:-4px 0 18px">' + alias + '</p>' : '') +
+          '<div class="pd__roles reveal" style="--d:140ms">' + roles.join('') + '</div>' +
+          '<p class="section__lede reveal" style="--d:180ms;max-width:560px">' + JB_UI.pick(player.tagline) + '</p>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="section__head reveal" style="margin-bottom:22px">' +
+        '<div class="eyebrow" data-i18n="pd.factsEyebrow">Details</div>' +
+        '<h2 class="section__title" style="font-size:clamp(22px,3vw,32px)" data-i18n="pd.factsTitle">基本资料</h2>' +
+      '</div>' +
+
+      '<div class="facts reveal" style="margin-bottom:64px">' +
+        cell('pd.kId',    { cn: '游戏 ID', en: 'In-game ID' }, player.handle) +
+        cell('pd.kAlias', { cn: '别名',    en: 'Also known as' }, alias || { cn: '—', en: '—' }) +
+        cell('pd.kRole',  { cn: '位置',    en: 'Role' }, player.role) +
+        cell('pd.kSince', { cn: '入队时间', en: 'Joined' }, player.since) +
+        cell('pd.kStatus',{ cn: '队内身份', en: 'Status' }, player.captain
+              ? { cn: '队长 / 指挥', en: 'Captain / IGL' }
+              : { cn: '正式队员', en: 'Active member' }) +
+      '</div>' +
+
+      /* 平台战绩（完美平台） */
+      statsHTML() +
+
+      (tiles.length
+        ? '<div class="section__head reveal" style="margin-bottom:22px">' +
+            '<div class="eyebrow" data-i18n="pd.assetsEyebrow">Assets</div>' +
+            '<h2 class="section__title" style="font-size:clamp(22px,3vw,32px)" data-i18n="pd.assetsTitle">印花与签名</h2>' +
+            '<p class="section__lede" data-i18n="pd.assetsLede">点击任意图块可以放大查看。</p>' +
+          '</div>' +
+          '<div class="asset-row reveal" data-stagger="80">' +
+            tiles.map(function (t) {
+              var label = player.handle + ' · ' + JB_UI.pick(t.k);
+              return '<div class="asset-tile">' +
+                       '<div class="asset-tile__media">' +
+                         '<img src="' + t.src + '" alt="' + label + '"' +
+                         ' data-lightbox="true" data-lightbox-cap="' + label + '"' +
+                         ' loading="lazy" decoding="async">' +
+                       '</div>' +
+                       '<div class="asset-tile__label">' + JB_UI.pick(t.k) + '</div>' +
+                     '</div>';
+            }).join('') +
+          '</div>'
+        : '<div class="hint-bar reveal" style="max-width:820px">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>' +
+            '<span>' + JB_UI.pick({
+              cn: '这位队员暂时还没有印花或签名素材。素材做好后放进 TEAM JBYangC 文件夹，再在 data.js 里补上路径即可。',
+              en: 'This player has no sticker or signature assets yet. Add them to the TEAM JBYangC folder and set the path in data.js.'
+            }) + '</span>' +
+          '</div>') +
+
+      /* 上一位 / 下一位 */
+      '<div class="pd__nav" style="margin-top:76px">' +
+        '<a class="btn btn--ghost" href="player.html?id=' + encodeURIComponent(prev.id) + '">' +
+          '<span aria-hidden="true">←</span>' +
+          '<span>' + prev.handle + '</span>' +
+        '</a>' +
+        '<a class="btn btn--ghost" href="players.html">' +
+          JB_UI.pick({ cn: '全部阵容', en: 'Full roster' }) +
+        '</a>' +
+        '<a class="btn btn--ghost" href="player.html?id=' + encodeURIComponent(next.id) + '">' +
+          '<span>' + next.handle + '</span>' +
+          '<span aria-hidden="true">→</span>' +
+        '</a>' +
+      '</div>';
+
+    /* 头像回退：依次尝试候选素材，全部失败则显示首字母 */
+    armPortraitFallback();
+
+    /* build() 生成的所有内容都带 .reveal（初始 opacity:0），
+       必须登记进滚动观察器，否则整页看起来是空白的。 */
+    if (JB_UI.reveal) JB_UI.reveal();
+
+    /* 标题与分享信息跟着选手走 */
+    document.title = player.handle + ' — TEAM JBYangC';
+    var md = document.querySelector('meta[name="description"]');
+    if (md) md.setAttribute('content',
+      player.handle + ' (' + role + ') — TEAM JBYangC ' +
+      JB_UI.pick({ cn: '队员个人资料。', en: 'player profile.' }));
+  }
+
+  function cell(key, label, value) {
+    return '<div class="facts__cell">' +
+             '<div class="facts__k" data-i18n="' + key + '">' + JB_UI.pick(label) + '</div>' +
+             '<div class="facts__v">' + JB_UI.pick(value) + '</div>' +
+           '</div>';
+  }
+
+  /* ---------------------------------------------------------------------
+     5. 文案
+     --------------------------------------------------------------------- */
+  window.JB_I18N = window.JB_I18N || {};
+  Object.assign(window.JB_I18N, {
+    'pd.eyebrow': { cn: 'Player profile', en: 'Player profile' },
+    'pd.factsEyebrow': { cn: 'Details', en: 'Details' },
+    'pd.factsTitle': { cn: '基本资料', en: 'Details' },
+    'pd.kId': { cn: '游戏 ID', en: 'In-game ID' },
+    'pd.kAlias': { cn: '别名', en: 'Also known as' },
+    'pd.kRole': { cn: '位置', en: 'Role' },
+    'pd.kSince': { cn: '入队时间', en: 'Joined' },
+    'pd.kStatus': { cn: '队内身份', en: 'Status' },
+    'pd.statsEyebrow': { cn: 'Performance', en: 'Performance' },
+    'pd.statsTitle': { cn: '平台战绩', en: 'Platform stats' },
+    'pd.statsLede': {
+      cn: '数据取自完美平台，仅供队内参考。',
+      en: 'Figures come from the Perfect World platform, for internal reference.'
+    },
+    'pd.assetsEyebrow': { cn: 'Assets', en: 'Assets' },
+    'pd.assetsTitle': { cn: '印花与签名', en: 'Sticker and signature' },
+    'pd.assetsLede': { cn: '点击任意图块可以放大查看。', en: 'Click any tile to enlarge it.' }
+  });
+
+  build();
+
+  /* 切换语言后整页重绘，保证位置、身份等文字同步 */
+  window.JB_onLang = window.JB_onLang || [];
+  window.JB_onLang.push(function () { build(); });
+
+  /* 首帧同步一次静态文案 */
+  if (window.JB_applyLang) window.JB_applyLang(window.JB_lang());
+})();
+</script>
+
+<style>
+  .pd__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 34px;
+    border-top: 1px solid var(--line);
+  }
+  /* 点开素材条也放大 */
+  .asset-tile__media img { cursor: zoom-in; }
+</style>
+</body>
+</html>

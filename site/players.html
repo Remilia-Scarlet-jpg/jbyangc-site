@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js" data-lang="cn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>选手阵容 | TEAM JBYangC</title>
+<meta name="description" content="TEAM JBYangC 在册队员：YangC、Miyabi、Remilia、shen、Aspirin、Flash、Copier。指挥、突破手、狙击手与自由人的位置分工与个人资料。">
+<meta name="theme-color" content="#05070d">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <span class="ambient__glow ambient__glow--a"></span>
+  <span class="ambient__glow ambient__glow--b"></span>
+  <span class="ambient__glow ambient__glow--c"></span>
+  <span class="ambient__grid"></span>
+  <span class="ambient__vignette"></span>
+</div>
+
+<a class="skip-link" href="#main" data-i18n="a11y.skip">跳到主要内容</a>
+<header id="site-nav"></header>
+
+<main class="page" id="main">
+
+  <section class="section" style="padding-top:calc(var(--nav-h) + 78px);padding-bottom:44px">
+    <div class="shell">
+      <div class="section__head" style="max-width:840px">
+        <div class="eyebrow reveal" data-i18n="roster.eyebrow">Roster</div>
+        <h1 class="section__title reveal" style="--d:80ms;font-size:clamp(34px,5.4vw,58px)" data-i18n="roster.title">
+          在册队员
+        </h1>
+        <p class="section__lede reveal" style="--d:160ms" data-i18n="roster.lede">
+          七个人，四个位置。分工是为了让一局游戏顺畅，而不是给人分等级。
+          点击任意一位队员，可以看到他的印花、签名与个人资料。
+        </p>
+      </div>
+
+      <!-- 位置筛选：纯前端过滤，无 JS 时所有卡片照常显示 -->
+      <div class="filters reveal" style="--d:220ms" id="role-filters" role="group" aria-label="Filter by role"></div>
+
+      <p class="filter-count" id="filter-count" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="shell">
+      <div class="roster-grid" id="roster-grid" data-stagger="70"></div>
+
+      <div class="empty" id="roster-empty" hidden>
+        <div class="empty__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </div>
+        <div class="empty__title" data-i18n="roster.emptyTitle">该位置暂时没有队员</div>
+        <p class="empty__text" data-i18n="roster.emptyText">换个位置看看，或者查看全部。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 位置说明 -->
+  <section class="section section--divide" style="padding-top:0">
+    <div class="shell">
+      <div class="section__head">
+        <div class="eyebrow reveal" data-i18n="roster.rolesEyebrow">Roles</div>
+        <h2 class="section__title reveal" style="--d:80ms" data-i18n="roster.rolesTitle">位置说明</h2>
+        <p class="section__lede reveal" style="--d:160ms" data-i18n="roster.rolesLede">
+          业余队伍的岗位划分没那么严格，实际打起来经常互相串位。以下是我们默认的分工。
+        </p>
+      </div>
+
+      <div class="grid grid--4" data-stagger="90" id="role-cards"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  var JB = window.JB;
+
+  /* ---------------------------------------------------------------------
+     位置定义：顺序即筛选按钮顺序
+     --------------------------------------------------------------------- */
+  var ROLES = [
+    { key: 'igl',   cn: '指挥',   en: 'IGL',          icon: 'target',
+      cnDesc: '负责叫战术、控节奏，把五个人的想法捏成一个决定。队内沟通的主要出口。',
+      enDesc: 'Calls the tactics and the tempo, turning five opinions into one decision. The main outlet for comms.' },
+    { key: 'entry', cn: '突破手', en: 'Entry Fragger', icon: 'spark',
+      cnDesc: '第一个进点的人。负责开门、拉枪线、把对方的注意力吸过来。',
+      enDesc: 'First one onto the site. Opens the door, pulls the angle, draws the attention.' },
+    { key: 'awp',   cn: '狙击手', en: 'AWPer',         icon: 'flag',
+      cnDesc: '架住关键枪线的人。一枪定音，也可能一枪听个响。',
+      enDesc: 'Holds the key angle. One shot settles the round — or just makes a noise.' },
+    { key: 'free',  cn: '自由人', en: 'Free Agent',    icon: 'grid',
+      cnDesc: '补位与游走。哪里缺人就顶上去，不固定在某一条线上。',
+      enDesc: 'Fills and roams. Steps into whatever slot is missing rather than holding one lane.' }
+  ];
+
+  /* 每张位置卡片的配色，与选手卡呼应 */
+  var ROLE_ACCENT = { igl: '#38bdf8', entry: '#a78bfa', awp: '#60a5fa', free: '#22d3ee' };
+
+  var activeRole = 'all';
+
+  /* ---------------------------------------------------------------------
+     渲染选手卡
+     --------------------------------------------------------------------- */
+  /* 队长排第一，其余按位置顺序，同位置保持名单原顺序 */
+  function ordered() {
+    var rank = { igl: 0, entry: 1, awp: 2, free: 3 };
+    return JB.ROSTER.slice().sort(function (a, b) {
+      if (!!b.captain !== !!a.captain) return (b.captain ? 1 : 0) - (a.captain ? 1 : 0);
+      return (rank[a.roleKey] || 9) - (rank[b.roleKey] || 9);
+    });
+  }
+
+  function renderRoster() {
+    var grid = document.getElementById('roster-grid');
+    grid.innerHTML = ordered().map(JB_UI.playerCardHTML).join('');
+    JB_UI.initImageChains();
+    if (JB_UI.reveal) JB_UI.reveal();
+    applyFilter(activeRole, true);
+  }
+
+  /* ---------------------------------------------------------------------
+     筛选
+     --------------------------------------------------------------------- */
+  function applyFilter(role, silent) {
+    activeRole = role;
+    var grid = document.getElementById('roster-grid');
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.player'));
+    var shown = 0;
+
+    cards.forEach(function (c) {
+      var match = (role === 'all') || (c.getAttribute('data-role') === role);
+      c.classList.toggle('is-hidden', !match);
+      if (match) {
+        shown++;
+        /* 重新播一次入场动画，让筛选有反馈 */
+        if (!silent) {
+          c.classList.remove('is-in');
+          void c.offsetWidth;               // 强制回流，重置过渡
+          requestAnimationFrame(function () { c.classList.add('is-in'); });
+        }
+      }
+    });
+
+    document.getElementById('roster-empty').hidden = shown > 0;
+
+    /* 更新按钮状态 */
+    Array.prototype.slice.call(document.querySelectorAll('.filter')).forEach(function (b) {
+      var on = b.getAttribute('data-role') === role;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+
+    /* 结果计数 */
+    var label = role === 'all'
+      ? { cn: '全部 ' + shown + ' 人', en: 'All ' + shown + ' players' }
+      : (function () {
+          var r = ROLES.filter(function (x) { return x.key === role; })[0];
+          return { cn: JB_UI.pick(r) + ' · ' + shown + ' 人', en: JB_UI.pick(r) + ' · ' + shown + ' player' + (shown > 1 ? 's' : '') };
+        })();
+    document.getElementById('filter-count').textContent = JB_UI.pick(label);
+  }
+
+  function renderFilters() {
+    var host = document.getElementById('role-filters');
+    var items = [{ key: 'all', cn: '全部', en: 'All' }].concat(ROLES);
+    host.innerHTML = items.map(function (r) {
+      return '<button class="filter' + (r.key === 'all' ? ' is-on' : '') + '" type="button"' +
+             ' data-role="' + r.key + '" aria-pressed="' + (r.key === 'all') + '">' +
+             JB_UI.pick(r) + '</button>';
+    }).join('');
+    Array.prototype.slice.call(host.querySelectorAll('.filter')).forEach(function (b) {
+      b.addEventListener('click', function () { applyFilter(b.getAttribute('data-role')); });
+    });
+  }
+
+  function renderRoleCards() {
+    var host = document.getElementById('role-cards');
+    host.innerHTML = ROLES.map(function (r) {
+      var count = JB.ROSTER.filter(function (p) { return p.roleKey === r.key; }).length;
+      return '' +
+        '<article class="card reveal" style="--p-a:' + (ROLE_ACCENT[r.key] || '#22d3ee') + '">' +
+          '<div class="card__icon" aria-hidden="true">' + JB_UI.icon[r.icon] + '</div>' +
+          '<h3 class="card__title">' + JB_UI.pick(r) + '</h3>' +
+          '<p class="card__text">' + JB_UI.pick({ cn: r.cnDesc, en: r.enDesc }) + '</p>' +
+          '<div class="player__meta" style="margin-top:20px">' +
+            '<span>' + (JB_UI.pick({ cn: '队内', en: 'On roster' })) + '</span>' +
+            '<span>' + count + ' ' + JB_UI.pick({ cn: '人', en: 'p' }) + '</span>' +
+          '</div>' +
+        '</article>';
+    }).join('');
+    if (JB_UI.reveal) JB_UI.reveal();
+  }
+
+  /* ---------------------------------------------------------------------
+     文案
+     --------------------------------------------------------------------- */
+  window.JB_I18N = window.JB_I18N || {};
+  Object.assign(window.JB_I18N, {
+    'roster.eyebrow': { cn: 'Roster', en: 'Roster' },
+    'roster.title': { cn: '在册队员', en: 'The roster' },
+    'roster.lede': {
+      cn: '七个人，四个位置。分工是为了让一局游戏顺畅，而不是给人分等级。点击任意一位队员，可以看到他的印花、签名与个人资料。',
+      en: 'Seven players across four roles. The split exists to make a match run smoothly, not to rank anyone. Open any player to see their sticker, signature and profile.'
+    },
+    'roster.emptyTitle': { cn: '该位置暂时没有队员', en: 'No players in this role yet' },
+    'roster.emptyText': { cn: '换个位置看看，或者查看全部。', en: 'Try another role, or view everyone.' },
+    'roster.rolesEyebrow': { cn: 'Roles', en: 'Roles' },
+    'roster.rolesTitle': { cn: '位置说明', en: 'What each role does' },
+    'roster.rolesLede': {
+      cn: '业余队伍的岗位划分没那么严格，实际打起来经常互相串位。以下是我们默认的分工。',
+      en: 'Roles are looser in an amateur team and we swap around constantly in practice. This is the split we default to.'
+    }
+  });
+
+  /* ---------------------------------------------------------------------
+     启动
+     --------------------------------------------------------------------- */
+  renderFilters();
+  renderRoster();
+  renderRoleCards();
+
+  window.JB_onLang = window.JB_onLang || [];
+  window.JB_onLang.push(function () {
+    renderFilters();
+    renderRoleCards();
+    renderRoster();
+  });
+})();
+</script>
+
+<style>
+  /* 筛选按钮 —— 与语言胶囊同一套视觉语言 */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .filter {
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(148, 180, 235, .05);
+    color: var(--text-soft);
+    font-size: 14.5px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: color var(--t-base) var(--ease), border-color var(--t-base) var(--ease),
+                transform var(--t-base) var(--ease-out), background var(--t-base) var(--ease);
+  }
+  .filter:hover { color: var(--text); border-color: var(--line-strong); transform: translateY(-2px); }
+  .filter::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--grad-soft);
+    opacity: 0;
+    transition: opacity var(--t-base) var(--ease);
+  }
+  .filter.is-on {
+    color: var(--text);
+    border-color: rgba(34, 211, 238, .45);
+    font-weight: 600;
+  }
+  .filter.is-on::before { opacity: 1; }
+  .filter-count {
+    margin: 18px 0 0;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: .1em;
+    color: var(--text-mute);
+  }
+  /* 被筛掉的卡片：先淡出再移出文档流，避免布局突然塌陷 */
+  .player.is-hidden {
+    display: none;
+  }
+</style>
+</body>
+</html>

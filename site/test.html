@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>素材自检 | Asset check — TEAM JBYangC</title>
+<script>
+/* 跟随站点主题设置（与 assets/js/main.js 的防闪白脚本一致） */
+(function () {
+  var actual = 'dark', mode = 'auto';
+  try {
+    mode = localStorage.getItem('jb-theme') || 'auto';
+    if (mode === 'light' || mode === 'dark') actual = mode;
+    else { mode = 'auto'; actual = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark'; }
+  } catch (e) {}
+  document.documentElement.setAttribute('data-theme', actual);
+})();
+</script>
+<style>
+  /* 这一页是诊断工具，样式自带一份，不依赖站点样式表 */
+  :root {
+    --bg: #05070d; --surface: #0c1120; --line: #1b2438;
+    --text: #e9eefb; --mute: #6b7a9c; --accent: #22d3ee;
+    --ok: #34d399; --bad: #fb7185; --wait: #fbbf24;
+  }
+  [data-theme="light"] {
+    --bg: #f7f9fd; --surface: #ffffff; --line: #dfe6f2;
+    --text: #0b1526; --mute: #77839c; --accent: #0e9bb8;
+    --ok: #0d9b6c; --bad: #d63d5b; --wait: #b4780a;
+  }
+  body {
+    font: 15px/1.7 'Cascadia Mono', Consolas, monospace;
+    background: var(--bg); color: var(--text);
+    padding: 34px; margin: 0;
+  }
+  h1 { font-size: 19px; margin: 0 0 10px; }
+  p  { color: var(--mute); margin: 0 0 20px; max-width: 920px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border-bottom: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { color: var(--mute); font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+  .ok { color: var(--ok); }
+  .bad { color: var(--bad); }
+  .wait { color: var(--wait); }
+  img, video { width: 64px; height: 64px; object-fit: contain; background: var(--surface); border-radius: 6px; }
+  code { color: var(--accent); word-break: break-all; }
+  #summary { margin: 22px 0; padding: 14px 18px; border: 1px solid var(--line); border-radius: 10px; }
+  strong.warn { color: var(--wait); }
+</style>
+</head>
+<body>
+<h1>素材路径自检 / Asset path check</h1>
+<p>
+  这一页是诊断工具，不参与正式网站，可以随时删除。<br>
+  它按站点真实的解析结果去请求每一个素材，逐行列出「用途 / 解析后的地址 / 状态 / 预览」。<br>
+  本站是完全离线自包含的：素材位于 <code>assets/media/</code>，
+  双击 <code>index.html</code> 即可浏览，<strong class="warn">不需要服务器，也不需要联网</strong>。<br>
+  如果有行显示「失败」，说明 <code>assets\media</code> 里的文件还没放齐 ——
+  请把 <code>TEAM JBYangC</code> 中对应的文件夹复制进去，保持原有文件名不变（详见 README.md）。
+</p>
+
+<div id="summary">检测中…</div>
+<div id="out"></div>
+
+<script src="assets/js/data.js"></script>
+<script>
+(function () {
+  'use strict';
+  var JB = window.JB;
+  if (!JB) {
+    document.getElementById('summary').innerHTML =
+      '<span class="bad">data.js 没有加载成功。</span> 请确认本页与 assets 目录在同一层。';
+    return;
+  }
+
+  var rows = [];
+  function push(label, url) { if (url) rows.push({ label: label, url: url }); }
+
+  push('徽章 · 彩色',             JB.CREST.color);
+  push('徽章 · 简洁抠图',         JB.CREST.simpleCutout);
+  push('徽章 · 白黑透明',         JB.CREST.whiteBlackT);
+  push('徽章 · 黑白抠图',         JB.CREST.monoCutout);
+  push('徽章动画 1（视频）',      JB.CREST.anim1);
+  push('徽章动画 2（视频）',      JB.CREST.anim2);
+  push('入场动画 · 轻量（视频）', JB.MEDIA.entryAnimations[0].src);
+  push('入场动画 · 无声（视频）', JB.MEDIA.entryAnimations[1].src);
+  push('队服',                    JB.MEDIA.gear[0].src);
+  push('贴纸',                    JB.MEDIA.gear[1].src);
+
+  JB.ROSTER.forEach(function (p) {
+    if (p.photos[0]) push('照片 · ' + p.id, p.photos[0]);
+    if (p.sticker)   push('印花 · ' + p.id, p.sticker);
+    if (p.signature) push('签名 · ' + p.id, p.signature);
+  });
+
+  /* 关注渠道（外链只做展示，不探测） */
+  JB.CONTACT.forEach(function (c) {
+    if (c.href) push('链接 · ' + (((c.label || {}).cn) || c.key), c.href);
+  });
+
+  /* 团队合影 */
+  if (JB.MEDIA.groupPhoto && JB.MEDIA.groupPhoto.src) {
+    push('合影', JB.MEDIA.groupPhoto.src);
+  }
+
+  var out = document.getElementById('out');
+  var html = '<table><thead><tr><th style="width:200px">用途</th><th>解析后的地址</th>' +
+             '<th style="width:150px">状态</th><th style="width:80px">预览</th></tr></thead><tbody>';
+  rows.forEach(function (r, i) {
+    html += '<tr id="r' + i + '"><td>' + r.label + '</td><td><code>' + r.url + '</code></td>' +
+            '<td class="st wait">检测中…</td><td class="pv"></td></tr>';
+  });
+  html += '</tbody></table>';
+  out.innerHTML = html;
+
+  var done = 0;
+  var failList = [];
+  var isFile = location.protocol === 'file:';
+
+  function finish() {
+    done++;
+    if (done < rows.length) return;
+    var s = document.getElementById('summary');
+    var head = isFile
+      ? '<span class="ok">当前是 file:// 协议，也就是双击打开的方式 —— 这正是本站的目标运行方式。</span><br><br>'
+      : '';
+
+    if (failList.length === 0) {
+      s.innerHTML = head + '<span class="ok">全部 ' + rows.length + ' 项解析正常。</span> ' +
+                    '网站里的图片与视频都能正常显示。';
+    } else {
+      s.innerHTML = head + '<span class="bad">' + failList.length + ' / ' + rows.length + ' 项失败：</span><br>' +
+                    failList.map(function (f) { return '· ' + f; }).join('<br>') +
+                    '<br><br>说明 <code>assets\\media</code> 里还缺文件。请把 <code>TEAM JBYangC</code> 中' +
+                    '对应的文件夹复制进去，保持原有文件名不变（详见 README.md 第一节）。';
+    }
+  }
+
+  rows.forEach(function (r, i) {
+    var tr = document.getElementById('r' + i);
+    var st = tr.querySelector('.st');
+    var pv = tr.querySelector('.pv');
+
+    function good(detail) {
+      st.innerHTML = '<span class="ok">OK</span> ' + detail;
+      finish();
+    }
+    function bad(detail) {
+      st.innerHTML = '<span class="bad">失败</span> ' + detail;
+      failList.push(r.label + ' → ' + r.url);
+      finish();
+    }
+
+    /* 外链不探测，只标出地址 */
+    if (/^https?:/i.test(r.url)) {
+      st.innerHTML = '<span class="ok">链接</span> 新标签打开';
+      pv.innerHTML = '<a href="' + r.url + '" target="_blank" rel="noopener" style="color:var(--accent)">↗</a>';
+      finish();
+      return;
+    }
+
+    if (/\.(mp4|webm)$/i.test(r.url)) {
+      var v = document.createElement('video');
+      v.muted = true; v.preload = 'metadata'; v.playsInline = true;
+      v.onloadedmetadata = function () { good(v.videoWidth + '×' + v.videoHeight); };
+      v.onerror = function () { bad('无法读取'); };
+      pv.appendChild(v);
+      v.src = r.url;
+    } else {
+      var im = document.createElement('img');
+      im.onload = function () { good(im.naturalWidth + '×' + im.naturalHeight); };
+      im.onerror = function () { bad('无法读取'); };
+      pv.appendChild(im);
+      im.src = r.url;
+    }
+  });
+})();
+</script>
+</body>
+</html>

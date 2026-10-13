@@ -1,0 +1,600 @@
+{
+  "images": [
+    {
+      "file": "队伍徽章\\队徽(不透明).png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 2086086,
+      "size_before": null,
+      "size_after": 24718,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 3838117,
+      "size_before": null,
+      "size_after": 37398,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（低透明度）.png",
+      "from": "821x816",
+      "to": "512x509",
+      "before": 4170291,
+      "size_before": null,
+      "size_after": 28854,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（彩）.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 5898406,
+      "size_before": null,
+      "size_after": 31364,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（白黑透明背景）.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 7093108,
+      "size_before": null,
+      "size_after": 28470,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（白黑）.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 9225034,
+      "size_before": null,
+      "size_after": 17482,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（简洁抠图）.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 9723852,
+      "size_before": null,
+      "size_after": 25756,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（简洁）.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 10784777,
+      "size_before": null,
+      "size_after": 8728,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（黑白抠图）.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 11687168,
+      "size_before": null,
+      "size_after": 55898,
+      "alpha": true
+    },
+    {
+      "file": "队伍徽章\\队徽（黑白）.png",
+      "from": "2048x2048",
+      "to": "512x512",
+      "before": 13642391,
+      "size_before": null,
+      "size_after": 18376,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Aspirin\\Aspirin.png",
+      "from": "686x720",
+      "to": "686x720",
+      "before": 14017063,
+      "size_before": null,
+      "size_after": 19086,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Aspirin\\Aspirin1.png",
+      "from": "1966x2132",
+      "to": "922x1000",
+      "before": 17190652,
+      "size_before": null,
+      "size_after": 81756,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Aspirin\\Aspirin2.png",
+      "from": "1984x2048",
+      "to": "969x1000",
+      "before": 19942610,
+      "size_before": null,
+      "size_after": 70210,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Aspirin\\Aspirin3.png",
+      "from": "2176x2112",
+      "to": "1000x971",
+      "before": 22756843,
+      "size_before": null,
+      "size_after": 65334,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Aspirin\\Aspirin（证件照）.png",
+      "from": "1269x1210",
+      "to": "1000x954",
+      "before": 23840366,
+      "size_before": null,
+      "size_after": 59170,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Aspirin\\Aspirin（队服）.png",
+      "from": "1952x2048",
+      "to": "953x1000",
+      "before": 26756602,
+      "size_before": null,
+      "size_after": 61860,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Copier\\Copier（抠图）.png",
+      "from": "540x625",
+      "to": "540x625",
+      "before": 27016692,
+      "size_before": null,
+      "size_after": 23282,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Copier\\屏幕截图 2026-09-19 195651.png",
+      "from": "540x625",
+      "to": "540x625",
+      "before": 27419432,
+      "size_before": null,
+      "size_after": 23416,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Miyabi\\Miyabi.jpg",
+      "from": "800x1071",
+      "to": "747x1000",
+      "before": 27594837,
+      "size_before": null,
+      "size_after": 40888,
+      "alpha": false
+    },
+    {
+      "file": "选手照片\\Miyabi\\Miyabi1.png",
+      "from": "2304x1888",
+      "to": "1000x819",
+      "before": 29964926,
+      "size_before": null,
+      "size_after": 52802,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Miyabi\\Miyabi2.png",
+      "from": "2304x1984",
+      "to": "1000x861",
+      "before": 32736118,
+      "size_before": null,
+      "size_after": 61386,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Miyabi\\Miyabi3.png",
+      "from": "1664x2592",
+      "to": "642x1000",
+      "before": 35924986,
+      "size_before": null,
+      "size_after": 55464,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Miyabi\\Miyabi4.png",
+      "from": "1792x2400",
+      "to": "747x1000",
+      "before": 38457367,
+      "size_before": null,
+      "size_after": 53236,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Miyabi\\Miyabi（抠图）.png",
+      "from": "800x1071",
+      "to": "747x1000",
+      "before": 39349312,
+      "size_before": null,
+      "size_after": 55294,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Remilia\\Remilia.jpg",
+      "from": "800x1298",
+      "to": "616x1000",
+      "before": 39544115,
+      "size_before": null,
+      "size_after": 36696,
+      "alpha": false
+    },
+    {
+      "file": "选手照片\\Remilia\\Remilia1.png",
+      "from": "1664x2336",
+      "to": "712x1000",
+      "before": 42130369,
+      "size_before": null,
+      "size_after": 53622,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Remilia\\Remilia2.png",
+      "from": "1888x2240",
+      "to": "843x1000",
+      "before": 44502225,
+      "size_before": null,
+      "size_after": 53348,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Remilia\\Remilia3.png",
+      "from": "1696x2304",
+      "to": "736x1000",
+      "before": 47053173,
+      "size_before": null,
+      "size_after": 55818,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\Remilia\\Remilia（抠图）.png",
+      "from": "800x1298",
+      "to": "616x1000",
+      "before": 48168779,
+      "size_before": null,
+      "size_after": 47714,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\shen\\shen.jpg",
+      "from": "828x1060",
+      "to": "781x1000",
+      "before": 48325478,
+      "size_before": null,
+      "size_after": 38078,
+      "alpha": false
+    },
+    {
+      "file": "选手照片\\shen\\shen1.png",
+      "from": "2112x2176",
+      "to": "971x1000",
+      "before": 51027205,
+      "size_before": null,
+      "size_after": 68722,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\shen\\shen2.png",
+      "from": "2112x1888",
+      "to": "1000x894",
+      "before": 53222490,
+      "size_before": null,
+      "size_after": 58572,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\shen\\shen3.png",
+      "from": "2272x1856",
+      "to": "1000x817",
+      "before": 55312656,
+      "size_before": null,
+      "size_after": 46778,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\shen\\shen（抠图）.png",
+      "from": "828x1060",
+      "to": "781x1000",
+      "before": 56090483,
+      "size_before": null,
+      "size_after": 53020,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\YangC\\YangC.png",
+      "from": "721x989",
+      "to": "721x989",
+      "before": 56784679,
+      "size_before": null,
+      "size_after": 41760,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\YangC\\YangC1.png",
+      "from": "2560x1728",
+      "to": "1000x675",
+      "before": 59107377,
+      "size_before": null,
+      "size_after": 51756,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\YangC\\YangC2.png",
+      "from": "1952x2272",
+      "to": "859x1000",
+      "before": 62215719,
+      "size_before": null,
+      "size_after": 67780,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\YangC\\YangC3.png",
+      "from": "2080x1824",
+      "to": "1000x877",
+      "before": 64467992,
+      "size_before": null,
+      "size_after": 57398,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\YangC\\YangC新.png",
+      "from": "1728x2304",
+      "to": "750x1000",
+      "before": 67183816,
+      "size_before": null,
+      "size_after": 55844,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\YangC\\YangC新2.png",
+      "from": "1728x2304",
+      "to": "750x1000",
+      "before": 69832720,
+      "size_before": null,
+      "size_after": 54094,
+      "alpha": true
+    },
+    {
+      "file": "选手照片\\YangC\\YangC（抠图）.png",
+      "from": "721x989",
+      "to": "721x989",
+      "before": 70534846,
+      "size_before": null,
+      "size_after": 53796,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Flash\\Flash印花.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 75496421,
+      "size_before": null,
+      "size_after": 42284,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Flash\\Flash印花2018伦敦.png",
+      "from": "2208x1984",
+      "to": "640x575",
+      "before": 79411686,
+      "size_before": null,
+      "size_after": 21472,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Flash\\Flash印花2018伦敦（透明）.png",
+      "from": "2208x1984",
+      "to": "640x575",
+      "before": 81921277,
+      "size_before": null,
+      "size_after": 34782,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Flash\\Flash印花（透明）.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 85130310,
+      "size_before": null,
+      "size_after": 62936,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Miyabi\\Miyabi印花.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 90047758,
+      "size_before": null,
+      "size_after": 43702,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Miyabi\\Miyabi印花2.png",
+      "from": "676x544",
+      "to": "640x515",
+      "before": 90599846,
+      "size_before": null,
+      "size_after": 42272,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Miyabi\\Miyabi印花（透明）.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 93794621,
+      "size_before": null,
+      "size_after": 63604,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Remilia\\Remilia印花2018伦敦.png",
+      "from": "2208x1984",
+      "to": "640x575",
+      "before": 97688549,
+      "size_before": null,
+      "size_after": 21212,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Remilia\\Remilia印花2018伦敦（透明）.png",
+      "from": "2208x1984",
+      "to": "640x575",
+      "before": 100176800,
+      "size_before": null,
+      "size_after": 34842,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Remilia\\Remilia印花2018波士顿.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 105140994,
+      "size_before": null,
+      "size_after": 42974,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\Remilia\\Remilia印花2018波士顿（透明）.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 108361981,
+      "size_before": null,
+      "size_after": 63568,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\shen\\shen印花.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 113270264,
+      "size_before": null,
+      "size_after": 41158,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\shen\\shen印花2.png",
+      "from": "676x544",
+      "to": "640x515",
+      "before": 113820499,
+      "size_before": null,
+      "size_after": 40710,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\shen\\shen印花（透明）.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 116953932,
+      "size_before": null,
+      "size_after": 58810,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\YangC\\YangC印花.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 121815493,
+      "size_before": null,
+      "size_after": 42576,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\YangC\\YangC印花（透明）.png",
+      "from": "2048x2048",
+      "to": "640x640",
+      "before": 124916345,
+      "size_before": null,
+      "size_after": 59990,
+      "alpha": true
+    },
+    {
+      "file": "选手印花\\YangC\\YangC贴纸2.png",
+      "from": "676x544",
+      "to": "640x515",
+      "before": 125481610,
+      "size_before": null,
+      "size_after": 42402,
+      "alpha": true
+    },
+    {
+      "file": "选手签名\\Flash的签名.png",
+      "from": "2432x1600",
+      "to": "640x421",
+      "before": 126053036,
+      "size_before": null,
+      "size_after": 9624,
+      "alpha": true
+    },
+    {
+      "file": "选手签名\\Miyabi的签名.png",
+      "from": "693x711",
+      "to": "624x640",
+      "before": 126167560,
+      "size_before": null,
+      "size_after": 45924,
+      "alpha": true
+    },
+    {
+      "file": "选手签名\\Remilia的签名.png",
+      "from": "1006x483",
+      "to": "640x307",
+      "before": 126319044,
+      "size_before": null,
+      "size_after": 36312,
+      "alpha": true
+    },
+    {
+      "file": "选手签名\\shen签名.png",
+      "from": "843x414",
+      "to": "640x314",
+      "before": 126450820,
+      "size_before": null,
+      "size_after": 32574,
+      "alpha": true
+    },
+    {
+      "file": "选手签名\\YangC签名（透明）.png",
+      "from": "873x615",
+      "to": "640x451",
+      "before": 126711882,
+      "size_before": null,
+      "size_after": 50790,
+      "alpha": true
+    },
+    {
+      "file": "队服\\队服.png",
+      "from": "1773x2364",
+      "to": "675x900",
+      "before": 130375606,
+      "size_before": null,
+      "size_after": 25544,
+      "alpha": true
+    },
+    {
+      "file": "队服\\队服（扣背景）.png",
+      "from": "1773x2364",
+      "to": "675x900",
+      "before": 133006815,
+      "size_before": null,
+      "size_after": 43368,
+      "alpha": true
+    },
+    {
+      "file": "合影\\TEAM JBYangC核心成员.png",
+      "from": "5176x3418",
+      "to": "1800x1189",
+      "before": 136474255,
+      "size_before": null,
+      "size_after": 72508,
+      "alpha": true
+    }
+  ],
+  "videos": [],
+  "skipped": []
+}

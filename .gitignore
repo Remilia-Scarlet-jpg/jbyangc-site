@@ -1,0 +1,29 @@
+# ---- 部署产物 ----
+# _build/make_zip.py 产出的离线分发包，由脚本生成，不入库
+*.zip
+
+# team-jbyangc-部署包/ 是 site/ 的旧副本（73 个文件全同）。
+# 唯一源已定为 site/，这份副本入库只会造成内容漂移，故忽略。
+# 需要离线包时用：python _build/make_zip.py
+team-jbyangc-部署包/
+
+# ---- 本地工具链 / 临时目录 ----
+# _tools 是 99 MB 的 Python 库副本（PIL、imageio_ffmpeg），
+# 只有 _build/optimize_video.py 和 test_ffmpeg.py 会用到，不要提交。
+_tools/
+_tmp/
+acl-recovery/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
