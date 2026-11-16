@@ -12,13 +12,18 @@
    ========================================================================== */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-/* 7 位队员的 id。
-   注意：这份列表目前和 data.js 的 ROSTER、_build/verify.js 里的期望列表
-   是三处重复，迁移完成后应该统一到 src/data/roster.ts 里。 */
-const ROSTER_IDS = ['YangC', 'Miyabi', 'Remilia', 'shen', 'Aspirin', 'Flash', 'Copier'];
-
 export function getStaticPaths() {
-  return ROSTER_IDS.map((id) => ({
+  /* 这份 id 列表必须写在函数内部。
+     Astro 会把 getStaticPaths 抽到独立的 chunk 里执行，frontmatter 顶层的
+     const 会被 tree-shake 掉 —— 实测报错「ROSTER_IDS is not defined」，
+     而且构建到「generating static routes」才失败，dist 里只留下 .prerender
+     中间产物、一页 HTML 都没有。
+
+     列表目前和 data.js 的 ROSTER、_build/verify.js 的期望列表三处重复，
+     迁移完成后应统一到 src/data/roster.ts。 */
+  const ids = ['YangC', 'Miyabi', 'Remilia', 'shen', 'Aspirin', 'Flash', 'Copier'];
+
+  return ids.map((id) => ({
     /* 路由用小写：GitHub Pages 跑在 Linux 上，路径大小写敏感 */
     params: { id: id.toLowerCase() },
     props: { playerId: id },
