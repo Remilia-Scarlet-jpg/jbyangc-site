@@ -6,6 +6,8 @@
 <title>选手资料 | TEAM JBYangC</title>
 <meta name="description" content="TEAM JBYangC 队员个人资料：位置分工、印花与签名素材。">
 <meta name="theme-color" content="#05070d">
+<link rel="icon" type="image/webp" href="assets/media/队伍徽章/队徽（简洁）.webp">
+<script>(function(){var a='dark',m='auto';try{m=localStorage.getItem('jb-theme')||'auto';if(m==='light'||m==='dark'){a=m;}else{m='auto';a=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}}catch(e){}document.documentElement.setAttribute('data-theme',a);document.documentElement.setAttribute('data-theme-mode',m);})();</script>
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -144,11 +146,8 @@
     awp:     { cn: '狙击', en: 'AWP' }
   };
 
-  function esc(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
+  /* esc() 由 assets/js/main.js 统一提供（window.JB_UI.esc），此处不再重复定义 */
+  var esc = window.JB_UI.esc;
 
   /* ---------------------------------------------------------------------
      3c. 雷达图：由能力数据动态生成

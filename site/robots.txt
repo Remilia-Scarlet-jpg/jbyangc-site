@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+# test.html 是素材自检页，不需要被收录
+Disallow: /test.html
+# join.html 只是旧链接的跳转页，无内容
+Disallow: /join.html
+
+# 站点上线后，把下面这行的域名换成你自己的，并去掉注释符
+# Sitemap: https://example.com/sitemap.xml

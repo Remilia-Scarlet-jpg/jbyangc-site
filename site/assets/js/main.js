@@ -324,26 +324,37 @@
 
     /* 汉堡菜单 */
     var burger = $('.burger', host);
+    /* 记录打开抽屉前的焦点，关闭时归还，否则键盘/读屏用户会丢失位置 */
+    var drawerReturnFocus = null;
+
+    function closeDrawer() {
+      drawer.classList.remove('is-open');
+      burger.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      if (drawerReturnFocus && drawerReturnFocus.focus) drawerReturnFocus.focus();
+      drawerReturnFocus = null;
+    }
+
     burger.addEventListener('click', function () {
-      var open = drawer.classList.toggle('is-open');
-      burger.classList.toggle('is-open', open);
-      burger.setAttribute('aria-expanded', String(open));
+      var open = !drawer.classList.contains('is-open');
+      if (!open) { closeDrawer(); return; }
+      drawerReturnFocus = document.activeElement;
+      drawer.classList.add('is-open');
+      burger.classList.add('is-open');
+      burger.setAttribute('aria-expanded', 'true');
+      /* 抽屉在 DOM 末尾，不主动移焦的话 Tab 会走到页面主体而不是抽屉里 */
+      var firstLink = $('.drawer__link', drawer);
+      if (firstLink) firstLink.focus();
     });
     /* 点击抽屉里的链接后自动收起 */
     $$('.drawer__link', drawer).forEach(function (a) {
-      a.addEventListener('click', function () {
-        drawer.classList.remove('is-open');
-        burger.classList.remove('is-open');
-        burger.setAttribute('aria-expanded', 'false');
-      });
+      a.addEventListener('click', closeDrawer);
     });
-    /* Esc 关闭 */
+    /* Esc 关闭 / Tab 焦点陷阱 */
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
-        drawer.classList.remove('is-open');
-        burger.classList.remove('is-open');
-        burger.setAttribute('aria-expanded', 'false');
-      }
+      if (!drawer.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { closeDrawer(); return; }
+      if (e.key === 'Tab') trapTab(drawer, e);
     });
 
     /* 滚动状态：毛玻璃 + 进度条 */
@@ -767,7 +778,9 @@
     $('.lightbox__close', lb.box).addEventListener('click', closeLightbox);
     lb.box.addEventListener('click', function (e) { if (e.target === lb.box) closeLightbox(); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && lb.box.classList.contains('is-open')) closeLightbox();
+      if (!lb.box.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { closeLightbox(); return; }
+      if (e.key === 'Tab') trapTab(lb.box, e);
     });
   }
 
@@ -933,8 +946,43 @@
 
      所以这里在模块作用域就把工具挂出去，boot() 只负责 DOM 初始化。
      ------------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------------
+     共享小工具 / Shared helpers
+     ------------------------------------------------------------------------ */
+
+  /** HTML 转义：任何拼接进 innerHTML 的字符串都必须经过这里。
+      follow / matches / media / player 四个页面原先各抄了一份逐字节相同的实现，
+      现在统一到这里，改一处即可。 */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  /** 焦点陷阱：把 Tab / Shift+Tab 限制在容器内部循环。
+      没有它的话，键盘用户可以 Tab 到模态框背后的内容上，
+      而容器上又声明了 aria-modal="true"，语义与实际行为会互相矛盾。 */
+  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]),' +
+                  ' select:not([disabled]), textarea:not([disabled]),' +
+                  ' [tabindex]:not([tabindex="-1"])';
+
+  function trapTab(container, e) {
+    var f = container.querySelectorAll(FOCUSABLE);
+    if (!f.length) return;
+    var first = f[0];
+    var last = f[f.length - 1];
+    var active = document.activeElement;
+    var inside = container.contains ? container.contains(active) : true;
+    if (e.shiftKey) {
+      if (active === first || !inside) { e.preventDefault(); last.focus(); }
+    } else if (active === last || !inside) {
+      e.preventDefault(); first.focus();
+    }
+  }
+
   window.JB_UI = {
     icon: I,
+    esc: esc,
     playerCardHTML: playerCardHTML,
     playerMediaHTML: playerMediaHTML,
     playerHref: playerHref,
