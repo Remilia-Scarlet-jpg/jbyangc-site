@@ -5,10 +5,13 @@ Astro 会把 `public/` 里的内容原样复制到 `dist/`，不做处理。
 ## 还需要把素材复制进来
 
 现有素材在 `..\site\assets\`（84 个文件、约 8 MB），需要原样复制到本目录，
-让 URL 路径保持 `/assets/media/...` 不变：
+让 URL 路径保持 `/assets/media/...` 不变。
+
+**在 `app\` 目录下执行**（不是在 public 目录下）：
 
 ```powershell
-robocopy ..\site\assets .\assets /E
+cd D:\LittleProject\JBYangC\app
+robocopy ..\site\assets .\public\assets /E
 ```
 
 复制完成后目录结构应为：
