@@ -9,13 +9,17 @@
      · 导航与页脚 → 独立的 .astro 组件（内容直接出现在 HTML 里）
      · data.js    → 构建期 TypeScript 模块（不再下发 27 KB 给客户端）
      · 双语       → 保留 localStorage 方案，但文案集中到 src/i18n/
+
+   路径要点（踩过坑，别改回去）：
+     站点部署在 /jbyangc-site/ 子路径下。所有指向 public\ 下资源的引用
+     都必须带 import.meta.env.BASE_URL，写成 /assets/... 会指向域名根、整站 404。
    ========================================================================== */
 interface Props {
   title: string;
   description?: string;
   /** 用于 og:url，默认取当前路径 */
   ogUrl?: string;
-  /** 用于 og:image，必须是绝对地址才能被社交平台抓取 */
+  /** 用于 og:image。相对路径，会以站点根为基准拼成绝对地址 */
   ogImage?: string;
 }
 
@@ -23,11 +27,14 @@ const {
   title,
   description = '',
   ogUrl = Astro.url.pathname,
-  ogImage = '/assets/media/og-cover.jpg',
+  ogImage = 'assets/media/og-cover.jpg',
 } = Astro.props;
 
-/* 站点根地址。换域名时只改这一处（对应旧站的 _build/set-domain.py）。 */
-const SITE = 'https://remilia-scarlet-jpg.github.io/jbyangc-site';
+/* 站点根地址。结尾斜杠必须有 —— 否则 new URL 的相对解析会丢掉最后一段。 */
+const SITE = 'https://remilia-scarlet-jpg.github.io/jbyangc-site/';
+
+/* Astro 注入的 base，值形如 '/jbyangc-site/' */
+const base = import.meta.env.BASE_URL;
 
 const absUrl = new URL(ogUrl, SITE).href;
 const absImage = new URL(ogImage, SITE).href;
@@ -40,7 +47,7 @@ const absImage = new URL(ogImage, SITE).href;
   <title>{title}</title>
   <meta name="description" content={description} />
   <meta name="theme-color" content="#05070d" />
-  <link rel="icon" type="image/webp" href="/assets/media/队伍徽章/队徽（简洁）.webp" />
+  <link rel="icon" type="image/webp" href={base + 'assets/media/队伍徽章/队徽（简洁）.webp'} />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="TEAM JBYangC" />
@@ -74,7 +81,7 @@ const absImage = new URL(ogImage, SITE).href;
     })();
   </script>
 
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href={base + 'assets/css/style.css'} />
 </head>
 <body>
 
@@ -98,8 +105,8 @@ const absImage = new URL(ogImage, SITE).href;
   <footer id="site-footer"></footer>
 
   {/* is:inline：这两个文件在 public\ 下，不需要 Astro 处理 */}
-  <script is:inline src="/assets/js/data.js"></script>
-  <script is:inline src="/assets/js/main.js"></script>
+  <script is:inline src={base + 'assets/js/data.js'}></script>
+  <script is:inline src={base + 'assets/js/main.js'}></script>
 
   {/* 页面级脚本插槽 —— 必须排在上面两个之后。
       页面脚本一上来就读 window.JB / window.JB_UI，用具名 slot 是为了

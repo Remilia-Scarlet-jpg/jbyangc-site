@@ -936,14 +936,11 @@
   }
 
   /* 选手详情页地址。
-     全站只有一张 player.html 模板，靠 ?id= 参数渲染对应选手，
-     这样加人、改名都只改 data.js，不需要新建文件。
-     放在 players/ 子目录里时用 data-detail-base 覆盖前缀。 */
+     Astro 版：每位队员是构建期生成的静态页 player\<id>.html（id 小写），
+     不再是旧站的 player.html?id=xxx 单模板。
+     相对路径，所以站内任意层级（根目录 / players.html）都能正确解析。 */
   function playerHref(p) {
-    var host = document.querySelector('[data-detail-base]');
-    /* host 存在但该属性为空时也要能回退，避免拼出 null?id=... */
-    var base = (host && host.getAttribute('data-detail-base')) || 'player.html';
-    return base + '?id=' + encodeURIComponent(p.id);
+    return 'player/' + String(p.id).toLowerCase() + '.html';
   }
 
   /* 渲染一张选手卡 */

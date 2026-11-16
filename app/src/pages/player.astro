@@ -1,0 +1,33 @@
+---
+/* ==========================================================================
+   旧链接兼容 / Legacy redirect
+   --------------------------------------------------------------------------
+   旧站用 player.html?id=YangC，新站改成 /player/<id>.html。
+   这个页面专门接住旧链接、书签和外部引用，跳一次就到位。
+
+   刻意不套 BaseLayout：跳转页越轻越好，不该为一个 302 去加载
+   style.css（76 KB）、data.js 和 main.js。
+   ========================================================================== */
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>正在跳转… | TEAM JBYangC</title>
+  <meta name="robots" content="noindex" />
+  <script is:inline>
+    (function () {
+      var m = /[?&]id=([^&]*)/.exec(location.search);
+      var id = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
+      /* 相对路径：站点在 /jbyangc-site/ 子路径下，绝对路径 /player/... 会跑出站点根 */
+      location.replace('player/' + (id ? String(id).toLowerCase() : 'yangc') + '.html');
+    })();
+  </script>
+</head>
+<body>
+  <p style="font-family:system-ui,-apple-system,sans-serif;padding:48px;line-height:1.7">
+    正在跳转到队员页面… 如果没有自动跳转，<a href="players.html">返回阵容</a>。
+  </p>
+</body>
+</html>

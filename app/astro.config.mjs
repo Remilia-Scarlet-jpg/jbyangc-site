@@ -13,6 +13,11 @@ export default defineConfig({
      看真实观感时容易被误认为站点自己的 UI。 */
   devToolbar: { enabled: false },
 
+  /* 站点部署在 GitHub Pages 的项目子路径下，不是域名根。
+     不设 base 的话，Layout 里写的 /assets/... 会指向
+     remilia-scarlet-jpg.github.io/assets/...（缺 jbyangc-site 前缀），整站样式 404。 */
+  base: '/jbyangc-site/',
+
   /* 关键：输出 players.html 而不是 players/index.html。
      旧站所有站内链接都写的是 `players.html`，如果 Astro 用默认的
      directory 格式，链接会全部 404。 */
