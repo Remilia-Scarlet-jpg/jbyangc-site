@@ -26,6 +26,10 @@ app/node_modules/
 app/dist/
 app/.astro/
 
+# 根目录不是 node 项目。若某次误在根目录跑 npm，会留下一个空 lock 文件，
+# 误导编辑器与工具去根目录找 package.json，直接忽略。
+/package-lock.json
+
 # ---- 编辑器 / 系统 ----
 .vscode/
 .idea/
