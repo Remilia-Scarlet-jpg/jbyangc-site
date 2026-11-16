@@ -100,5 +100,10 @@ const absImage = new URL(ogImage, SITE).href;
   {/* is:inline：这两个文件在 public\ 下，不需要 Astro 处理 */}
   <script is:inline src="/assets/js/data.js"></script>
   <script is:inline src="/assets/js/main.js"></script>
+
+  {/* 页面级脚本插槽 —— 必须排在上面两个之后。
+      页面脚本一上来就读 window.JB / window.JB_UI，用具名 slot 是为了
+      保证这个顺序；直接写在 slot 默认位置会跑到 data.js 前面去。 */}
+  <slot name="scripts" />
 </body>
 </html>
