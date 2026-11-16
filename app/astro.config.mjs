@@ -12,4 +12,9 @@ export default defineConfig({
   /* 关掉开发工具栏。它会在页面里注入浮层，
      看真实观感时容易被误认为站点自己的 UI。 */
   devToolbar: { enabled: false },
+
+  /* 关键：输出 players.html 而不是 players/index.html。
+     旧站所有站内链接都写的是 `players.html`，如果 Astro 用默认的
+     directory 格式，链接会全部 404。 */
+  build: { format: 'file' },
 });
