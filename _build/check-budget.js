@@ -11,18 +11,27 @@
      但队友的手机流量会被吃掉 —— 这种事只能靠预算卡住。
 
    用法
-     node _build/check-budget.js
-     node _build/check-budget.js --report     # 只打印，不因超预算失败
+     node _build/check-budget.js                        # 默认检查 site\
+     node _build/check-budget.js --dir app/dist         # 检查 Astro 构建产物
+     node _build/check-budget.js --report               # 只打印，不因超预算失败
 
    退出码
-     0 全部在预算内 / 1 有项目超预算 / 2 站点目录不存在
+     0 全部在预算内 / 1 有项目超预算 / 2 目录不存在
    ========================================================================== */
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
 
-const SITE = path.resolve(__dirname, '..', 'site');
+function argValue(name) {
+  const i = process.argv.indexOf(name);
+  return i >= 0 ? process.argv[i + 1] : null;
+}
+
+const dirArg = argValue('--dir');
+const SITE = dirArg
+  ? path.resolve(process.cwd(), dirArg)
+  : path.resolve(__dirname, '..', 'site');
 
 /* 预算表（单位 KB）。数值按当前实测上调了约 30% 的余量，
    不是拍脑袋 —— 留出正常迭代空间，但拦住数量级失控。 */
@@ -40,11 +49,35 @@ const KB = 1024;
 function walk(dir) {
   const out = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    /* 跳过 Astro 的构建中间目录（.prerender）以及任何隐藏目录：
+       它们不会进入线上，算进总量只会造成误报。 */
+    if (entry.name.startsWith('.')) continue;
     const p = path.join(dir, entry.name);
     if (entry.isDirectory()) out.push(...walk(p));
     else if (entry.isFile()) out.push(p);
   }
   return out;
+}
+
+/* 把 HTML 里的引用解析成实际文件。
+   Astro 版页面的引用带部署前缀（/jbyangc-site/assets/...），
+   直接 join 会拼出 dist/jbyangc-site/assets/... 这种不存在的路径，
+   所以先按原样试，再剥掉第一段（base 前缀）试一次。 */
+function resolveAsset(rel) {
+  const clean = decodeURIComponent(rel);
+  const candidates = [];
+  if (clean.startsWith('/')) {
+    const stripped = clean.replace(/^\//, '');
+    candidates.push(path.join(SITE, stripped));
+    const parts = stripped.split('/');
+    if (parts.length > 1) candidates.push(path.join(SITE, ...parts.slice(1)));
+  } else {
+    candidates.push(path.join(SITE, clean));
+  }
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  return null;
 }
 
 /* 单页关键资源：HTML 本身 + 它 <link href> / <script src> 指向的本地文件 */
@@ -57,8 +90,8 @@ function pageCriticalSize(htmlPath) {
   while ((m = re.exec(html)) !== null) {
     const rel = m[1];
     if (/^(?:https?:)?\/\//.test(rel)) continue;   // 外链不计（本站本来也没有）
-    const abs = path.join(SITE, decodeURIComponent(rel));
-    if (fs.existsSync(abs)) {
+    const abs = resolveAsset(rel);
+    if (abs) {
       const size = fs.statSync(abs).size;
       total += size;
       used.push({ rel, size });
