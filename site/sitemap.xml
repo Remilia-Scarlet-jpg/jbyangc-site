@@ -2,37 +2,37 @@
 <!-- 域名由 _build/set-domain.py 统一替换占位符 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>__SITE_URL__/</loc>
+    <loc>https://remilia-scarlet-jpg.github.io/jbyangc-site/</loc>
     <priority>1.0</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>__SITE_URL__/about.html</loc>
+    <loc>https://remilia-scarlet-jpg.github.io/jbyangc-site/about.html</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>__SITE_URL__/players.html</loc>
+    <loc>https://remilia-scarlet-jpg.github.io/jbyangc-site/players.html</loc>
     <priority>0.9</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>__SITE_URL__/player.html</loc>
+    <loc>https://remilia-scarlet-jpg.github.io/jbyangc-site/player.html</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>__SITE_URL__/matches.html</loc>
+    <loc>https://remilia-scarlet-jpg.github.io/jbyangc-site/matches.html</loc>
     <priority>0.7</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>__SITE_URL__/media.html</loc>
+    <loc>https://remilia-scarlet-jpg.github.io/jbyangc-site/media.html</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>__SITE_URL__/follow.html</loc>
+    <loc>https://remilia-scarlet-jpg.github.io/jbyangc-site/follow.html</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>

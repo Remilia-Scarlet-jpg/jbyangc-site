@@ -6,4 +6,4 @@ Disallow: /test.html
 Disallow: /join.html
 
 # 域名由 _build/set-domain.py 统一替换
-Sitemap: __SITE_URL__/sitemap.xml
+Sitemap: https://remilia-scarlet-jpg.github.io/jbyangc-site/sitemap.xml

@@ -56,8 +56,11 @@ def infer_from_git() -> str | None:
         return None
 
     user, repo = m.group(1), m.group(2)
+    # GitHub Pages 的 <user>.github.io 域名一律小写。
+    # 用户名本身不区分大小写，但写进 og:url / sitemap 时应该用规范的小写形式。
+    user = user.lower()
     # 仓库名就是 <user>.github.io 时，站点挂在域名根目录
-    if repo.lower() == f"{user.lower()}.github.io":
+    if repo.lower() == f"{user}.github.io":
         return f"https://{user}.github.io"
     return f"https://{user}.github.io/{repo}"
 
