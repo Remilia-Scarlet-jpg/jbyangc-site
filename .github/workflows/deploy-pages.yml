@@ -48,6 +48,11 @@ jobs:
       - name: 上线前自检（语法 / 素材引用 / 各页渲染）
         run: node _build/verify.js
 
+      # 站点没有构建步骤，也就没有打包器盯着体积；
+      # 这一关防止某次往 assets/media 塞个大文件把手机流量吃掉。
+      - name: 性能预算检查
+        run: node _build/check-budget.js
+
       - name: 配置 Pages
         uses: actions/configure-pages@v5
 

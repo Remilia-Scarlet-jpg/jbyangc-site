@@ -44,6 +44,8 @@ function buildContext(file, search) {
     addEventListener() {}, removeEventListener() {}, dispatchEvent() { return true; } };
   const store = {};
   const sandbox = {
+    /* 让 main.js 的控制台彩蛋在测试环境里静音，否则每页都会刷一遍 */
+    __JB_TEST__: true,
     scrollY: 0, innerHeight: 800, addEventListener() {}, removeEventListener() {},
     matchMedia: () => ({ matches: false, addEventListener() {}, addListener() {} }),
     dispatchEvent() { return true; }, document: documentShim,
@@ -116,7 +118,10 @@ console.log('===== 2. 素材引用完整性（扩展名改动后最关键）====
 console.log('');
 console.log('===== 3. 各页面渲染 =====');
 const EXPECT = {
-  'index.html':   [['home-roster', /class="player /g, 7], ['home-group-frame', /<img/g, 1]],
+  'index.html':   [['home-roster', /class="player /g, 7], ['home-group-frame', /<img/g, 1],
+                   /* 导航里应有配色按钮（每页都由 buildNav 注入）。
+                      注意不能用 /accent-btn/ —— 它也会匹配 accent-btn__dot */
+                   ['site-nav', /class="accent-btn"/g, 1]],
   'about.html':   [],
   'players.html': [['roster-grid', /class="player /g, 7], ['role-filters', /class="filter/g, 5], ['role-cards', /class="card /g, 4]],
   'matches.html': [['mt-body', /<tr>/g, 1], ['mt-facts', /facts__cell/g, 4]],

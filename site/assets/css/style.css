@@ -40,9 +40,21 @@
   --indigo:        #6366f1;
   --violet:        #8b5cf6;
 
+  /* 强调色的 RGB 分量 / RGB channels
+     ------------------------------------------------------------------------
+     CSS 的 rgba() 里塞不进十六进制变量，但可以塞 RGB 分量：
+     rgba(var(--cyan-rgb), .45)。这样半透明的强调色也能跟着配色一起换，
+     不必在 25 处组件规则里各写一遍红色值。
+     这 5 个值必须与上面的十六进制严格同步。 */
+  --cyan-rgb:      34, 211, 238;
+  --sky-rgb:       56, 189, 248;
+  --blue-rgb:      59, 130, 246;
+  --indigo-rgb:    99, 102, 241;
+  --violet-rgb:    139, 92, 246;
+
   --grad:          linear-gradient(115deg, var(--cyan) 0%, var(--sky) 28%, var(--blue) 58%, var(--indigo) 100%);
-  --grad-soft:     linear-gradient(115deg, rgba(34,211,238,.16), rgba(99,102,241,.16));
-  --grad-line:     linear-gradient(90deg, transparent, rgba(34,211,238,.55), rgba(99,102,241,.55), transparent);
+  --grad-soft:     linear-gradient(115deg, rgba(var(--cyan-rgb), .16), rgba(var(--indigo-rgb), .16));
+  --grad-line:     linear-gradient(90deg, transparent, rgba(var(--cyan-rgb), .55), rgba(var(--indigo-rgb), .55), transparent);
 
   /* 结果色 / Result accents */
   --win:           #34d399;
@@ -64,9 +76,9 @@
   --chip-bg-hover: rgba(148, 180, 235, .07);
   --hover-wash:    rgba(148, 180, 235, .045);
   --badge-bg:      rgba(6, 9, 17, .72);
-  --glow-a:        rgba(34, 211, 238, .5);
-  --glow-b:        rgba(99, 102, 241, .5);
-  --glow-c:        rgba(56, 189, 248, .28);
+  --glow-a:        rgba(var(--cyan-rgb), .5);
+  --glow-b:        rgba(var(--indigo-rgb), .5);
+  --glow-c:        rgba(var(--sky-rgb), .28);
   --vignette-top:  rgba(5, 7, 13, .86);
   --vignette-bot:  rgba(5, 7, 13, .92);
   --shadow-color:  rgba(0, 0, 0, .9);
@@ -98,8 +110,8 @@
   --font-mono:     'JetBrains Mono', 'SFMono-Regular', 'Cascadia Mono', Consolas, monospace;
 
   /* 光晕 */
-  --glow-cyan:     0 0 40px rgba(34, 211, 238, .28);
-  --glow-indigo:   0 0 46px rgba(99, 102, 241, .26);
+  --glow-cyan:     0 0 40px rgba(var(--cyan-rgb), .28);
+  --glow-indigo:   0 0 46px rgba(var(--indigo-rgb), .26);
   --shadow:        0 24px 60px -28px var(--shadow-color);
   --shadow-soft:   0 12px 30px -18px var(--shadow-color);
 }
@@ -131,6 +143,12 @@
   --blue:          #2158d8;
   --indigo:        #4c4ee0;
   --violet:        #7038d4;
+
+  --cyan-rgb:      14, 155, 184;
+  --sky-rgb:       13, 134, 201;
+  --blue-rgb:      33, 88, 216;
+  --indigo-rgb:    76, 78, 224;
+  --violet-rgb:    112, 56, 212;
 
   --grad-soft:     linear-gradient(115deg, rgba(14,155,184,.14), rgba(76,78,224,.12));
   --grad-line:     linear-gradient(90deg, transparent, rgba(14,155,184,.45), rgba(76,78,224,.45), transparent);
@@ -173,6 +191,60 @@
 }
 
 /* ==========================================================================
+   1d. 配色预设 / Accent presets
+   --------------------------------------------------------------------------
+   与明暗主题正交：data-theme 管底色和文字，data-accent 只管强调色。
+   不写 data-accent 就是默认的青 → 靛。
+
+   每套只定义 11 个值：5 个十六进制颜色 + 5 个 RGB 分量 + 渐变上的文字色。
+   --grad、--grad-soft、--grad-line、--glow-a/b/c、--glow-cyan/--glow-indigo
+   以及组件层的半透明强调色，全部由上一步的 rgba(var(--x-rgb), a) 自动派生，
+   所以这里不需要逐套重写 —— 加第 5 套配色只要再加 11 行。
+   ========================================================================== */
+
+/* 竞技红 / CRIMSON —— 渐变保持中亮，深色文字才压得住 */
+[data-accent="crimson"] {
+  --cyan: #fda4af; --sky: #fb7185; --blue: #f87171; --indigo: #f43f5e; --violet: #e11d48;
+  --cyan-rgb: 253, 164, 175;  --sky-rgb: 251, 113, 133;
+  --blue-rgb: 248, 113, 113;  --indigo-rgb: 244, 63, 94;  --violet-rgb: 225, 29, 72;
+  --btn-on-accent: #1a0308;
+}
+[data-theme="light"][data-accent="crimson"] {
+  --cyan: #e11d48; --sky: #be123c; --blue: #9f1239; --indigo: #881337; --violet: #f43f5e;
+  --cyan-rgb: 225, 29, 72;   --sky-rgb: 190, 18, 60;
+  --blue-rgb: 159, 18, 57;   --indigo-rgb: 136, 19, 55;  --violet-rgb: 244, 63, 94;
+  --btn-on-accent: #ffffff;
+}
+
+/* 荧光绿 / LIME */
+[data-accent="lime"] {
+  --cyan: #bef264; --sky: #a3e635; --blue: #84cc16; --indigo: #65a30d; --violet: #4d7c0f;
+  --cyan-rgb: 190, 242, 100;  --sky-rgb: 163, 230, 53;
+  --blue-rgb: 132, 204, 22;   --indigo-rgb: 101, 163, 13; --violet-rgb: 77, 124, 15;
+  --btn-on-accent: #101a02;
+}
+[data-theme="light"][data-accent="lime"] {
+  --cyan: #4d7c0f; --sky: #3f6212; --blue: #365314; --indigo: #2f4a0e; --violet: #84cc16;
+  --cyan-rgb: 77, 124, 15;   --sky-rgb: 63, 98, 18;
+  --blue-rgb: 54, 83, 20;    --indigo-rgb: 47, 74, 14;   --violet-rgb: 132, 204, 22;
+  --btn-on-accent: #ffffff;
+}
+
+/* 霓虹紫 / VIOLET —— 末段压在 #a855f7，深色文字对比度才刚好过线 */
+[data-accent="violet"] {
+  --cyan: #e9d5ff; --sky: #d8b4fe; --blue: #c084fc; --indigo: #a855f7; --violet: #9333ea;
+  --cyan-rgb: 233, 213, 255;  --sky-rgb: 216, 180, 254;
+  --blue-rgb: 192, 132, 252;  --indigo-rgb: 168, 85, 247; --violet-rgb: 147, 51, 234;
+  --btn-on-accent: #1a0b2e;
+}
+[data-theme="light"][data-accent="violet"] {
+  --cyan: #7e22ce; --sky: #6b21a8; --blue: #581c87; --indigo: #4c1d95; --violet: #a855f7;
+  --cyan-rgb: 126, 34, 206;  --sky-rgb: 107, 33, 168;
+  --blue-rgb: 88, 28, 135;   --indigo-rgb: 76, 29, 149;  --violet-rgb: 168, 85, 247;
+  --btn-on-accent: #ffffff;
+}
+
+/* ==========================================================================
    2. 基础重置 / Reset & base
    ========================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
@@ -211,18 +283,18 @@ h1, h2, h3, h4 {
 p { margin: 0 0 1.15em; }
 p:last-child { margin-bottom: 0; }
 
-::selection { background: rgba(34, 211, 238, .3); color: #fff; }
+::selection { background: rgba(var(--cyan-rgb), .3); color: #fff; }
 
 /* 滚动条 —— 与主题同色系 */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(34,211,238,.4), rgba(99,102,241,.4));
+  background: linear-gradient(180deg, rgba(var(--cyan-rgb), .4), rgba(var(--indigo-rgb), .4));
   border-radius: 10px;
   border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(34,211,238,.65), rgba(99,102,241,.65));
+  background: linear-gradient(180deg, rgba(var(--cyan-rgb), .65), rgba(var(--indigo-rgb), .65));
 }
 
 /* 键盘可达性 —— 焦点环统一 */
@@ -487,7 +559,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
 .brand__mark img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
 .brand:hover .brand__mark {
   transform: rotate(-4deg) scale(1.06);
-  border-color: rgba(34, 211, 238, .5);
+  border-color: rgba(var(--cyan-rgb), .5);
 }
 .brand__text { display: flex; flex-direction: column; line-height: 1.15; }
 .brand__name {
@@ -584,6 +656,41 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
 
 /* 白天 / 黑夜 / 跟随系统 三态切换：
    三个图标叠在同一格，靠 data-mode 决定显示哪一个。 */
+/* 配色切换按钮：一个随强调色变化的小圆点，尺寸与主题按钮一致 */
+.accent-btn {
+  position: relative;
+  width: 40px; height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--chip-bg);
+  cursor: pointer;
+  transition:
+    border-color var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease),
+    transform var(--t-base) var(--ease-out);
+}
+.accent-btn:hover {
+  border-color: rgba(var(--cyan-rgb), .45);
+  background: var(--chip-bg-hover);
+  transform: translateY(-1px);
+}
+.accent-btn:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+.accent-btn__dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--grad);
+  box-shadow: 0 0 10px rgba(var(--cyan-rgb), .5);
+  transition:
+    background var(--t-base) var(--ease),
+    box-shadow var(--t-base) var(--ease);
+}
+
 .theme-btn {
   position: relative;
   width: 40px; height: 40px;
@@ -603,7 +710,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
     transform var(--t-base) var(--ease-out);
 }
 .theme-btn:hover {
-  border-color: rgba(34, 211, 238, .45);
+  border-color: rgba(var(--cyan-rgb), .45);
   background: var(--chip-bg-hover);
   color: var(--cyan);
   transform: translateY(-1px);
@@ -717,7 +824,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   cursor: pointer;
   transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
-.theme-row:hover { border-color: rgba(34, 211, 238, .4); color: var(--text); }
+.theme-row:hover { border-color: rgba(var(--cyan-rgb), .4); color: var(--text); }
 
 /* ==========================================================================
    6. 按钮 / Buttons
@@ -751,12 +858,12 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   background: var(--grad);
   background-size: 200% 100%;
   background-position: 0% 50%;
-  box-shadow: 0 12px 34px -14px rgba(34, 211, 238, .7);
+  box-shadow: 0 12px 34px -14px rgba(var(--cyan-rgb), .7);
 }
 .btn--primary:hover {
   background-position: 100% 50%;
   transform: translateY(-2px);
-  box-shadow: 0 20px 44px -14px rgba(34, 211, 238, .8);
+  box-shadow: 0 20px 44px -14px rgba(var(--cyan-rgb), .8);
 }
 
 /* 次按钮：描边 + 悬停渐变渗入。
@@ -785,7 +892,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
 }
 .btn--ghost:hover {
   transform: translateY(-2px);
-  border-color: rgba(34, 211, 238, .45);
+  border-color: rgba(var(--cyan-rgb), .45);
 }
 .btn--ghost:hover::after { opacity: 1; }
 
@@ -840,7 +947,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   content: '';
   position: absolute;
   inset: -40%;
-  background: radial-gradient(circle at 50% 0%, rgba(34, 211, 238, .13), transparent 58%);
+  background: radial-gradient(circle at 50% 0%, rgba(var(--cyan-rgb), .13), transparent 58%);
   opacity: 0;
   transition: opacity var(--t-slow) var(--ease);
   pointer-events: none;
@@ -1020,8 +1127,8 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   border-radius: 50%;
   padding: 1px;
   background: conic-gradient(from 0deg,
-    transparent 0%, rgba(34,211,238,.75) 12%, transparent 30%,
-    transparent 50%, rgba(99,102,241,.7) 64%, transparent 82%);
+    transparent 0%, rgba(var(--cyan-rgb), .75) 12%, transparent 30%,
+    transparent 50%, rgba(var(--indigo-rgb), .7) 64%, transparent 82%);
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -1037,7 +1144,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   position: relative;
   z-index: 2;
   width: 62%;
-  filter: drop-shadow(0 26px 60px rgba(34, 211, 238, .34));
+  filter: drop-shadow(0 26px 60px rgba(var(--cyan-rgb), .34));
   animation: float 7.5s var(--ease-soft) infinite alternate;
   will-change: transform;
 }
@@ -1053,7 +1160,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   width: 54%;
   height: 46px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(34, 211, 238, .34), transparent 70%);
+  background: radial-gradient(ellipse, rgba(var(--cyan-rgb), .34), transparent 70%);
   filter: blur(22px);
   animation: breathe 7.5s var(--ease-soft) infinite alternate;
 }
@@ -1247,7 +1354,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   place-items: end center;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 76% 56% at 50% 104%, rgba(34, 211, 238, .16), transparent 66%),
+    radial-gradient(ellipse 76% 56% at 50% 104%, rgba(var(--cyan-rgb), .16), transparent 66%),
     linear-gradient(170deg, var(--chip-bg), transparent 60%);
 }
 .player__photo img {
@@ -1372,7 +1479,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   overflow: hidden;
   aspect-ratio: 4 / 5;
   background:
-    radial-gradient(ellipse 74% 54% at 50% 100%, rgba(34, 211, 238, .2), transparent 68%),
+    radial-gradient(ellipse 74% 54% at 50% 100%, rgba(var(--cyan-rgb), .2), transparent 68%),
     linear-gradient(170deg, var(--chip-bg), transparent 58%);
   border: 1px solid var(--line);
   display: grid;
@@ -1407,10 +1514,10 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   color: var(--text-soft);
   transition: border-color var(--t-base) var(--ease), color var(--t-base) var(--ease), background var(--t-base) var(--ease);
 }
-.chip:hover { border-color: rgba(34, 211, 238, .4); color: var(--text); }
+.chip:hover { border-color: rgba(var(--cyan-rgb), .4); color: var(--text); }
 .chip--accent {
   background: var(--grad-soft);
-  border-color: rgba(34, 211, 238, .3);
+  border-color: rgba(var(--cyan-rgb), .3);
   color: var(--text);
   font-weight: 600;
 }
@@ -1569,7 +1676,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   background-clip: text;
   color: transparent;
   padding-right: .12em;
-  filter: drop-shadow(0 0 18px rgba(34, 211, 238, .28));
+  filter: drop-shadow(0 0 18px rgba(var(--cyan-rgb), .28));
 }
 .stats-card__power-v--none {
   color: var(--text-mute);
@@ -1587,7 +1694,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   text-align: center;
   transition: border-color var(--t-base) var(--ease), transform var(--t-base) var(--ease-out);
 }
-.rank-chip:hover { border-color: rgba(34, 211, 238, .4); transform: translateY(-2px); }
+.rank-chip:hover { border-color: rgba(var(--cyan-rgb), .4); transform: translateY(-2px); }
 .rank-chip__k {
   display: block;
   font-size: 12px;
@@ -1632,7 +1739,7 @@ body.is-ready { animation: page-in .6s var(--ease-out) both; }
   stroke-width: 8;
   stroke-linecap: round;
   stroke-dashoffset: var(--off);
-  filter: drop-shadow(0 0 6px rgba(34, 211, 238, .32));
+  filter: drop-shadow(0 0 6px rgba(var(--cyan-rgb), .32));
   animation: ring-grow 1.2s var(--ease-out) both;
 }
 @keyframes ring-grow {
@@ -1970,7 +2077,7 @@ table.data .cell-mono { font-family: var(--font-mono); font-size: 13.5px; letter
   cursor: zoom-in;
   transition: transform var(--t-base) var(--ease-out), border-color var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease);
 }
-.shot:hover { transform: translateY(-5px); border-color: rgba(34, 211, 238, .38); box-shadow: var(--shadow); }
+.shot:hover { transform: translateY(-5px); border-color: rgba(var(--cyan-rgb), .38); box-shadow: var(--shadow); }
 .shot__frame {
   position: relative;
   aspect-ratio: 1;
@@ -2169,7 +2276,7 @@ table.data .cell-mono { font-family: var(--font-mono); font-size: 13.5px; letter
   margin: 40px 0;
   padding: 28px 32px 28px 36px;
   border-radius: var(--radius);
-  background: linear-gradient(120deg, rgba(34, 211, 238, .07), rgba(99, 102, 241, .05));
+  background: linear-gradient(120deg, rgba(var(--cyan-rgb), .07), rgba(var(--indigo-rgb), .05));
   border: 1px solid var(--line);
   overflow: hidden;
 }
@@ -2190,7 +2297,7 @@ table.data .cell-mono { font-family: var(--font-mono); font-size: 13.5px; letter
   position: absolute;
   left: 5px; top: 8px; bottom: 8px;
   width: 1px;
-  background: linear-gradient(180deg, var(--cyan), rgba(99, 102, 241, .5), transparent);
+  background: linear-gradient(180deg, var(--cyan), rgba(var(--indigo-rgb), .5), transparent);
 }
 .tl-item { position: relative; padding-bottom: 38px; }
 .tl-item:last-child { padding-bottom: 0; }
@@ -2204,7 +2311,7 @@ table.data .cell-mono { font-family: var(--font-mono); font-size: 13.5px; letter
   border: 2px solid var(--cyan);
   transition: box-shadow var(--t-base) var(--ease), transform var(--t-base) var(--ease-out);
 }
-.tl-item:hover::before { box-shadow: 0 0 0 5px rgba(34, 211, 238, .14); transform: scale(1.15); }
+.tl-item:hover::before { box-shadow: 0 0 0 5px rgba(var(--cyan-rgb), .14); transform: scale(1.15); }
 .tl-item__date {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -2309,6 +2416,8 @@ table.data .cell-mono { font-family: var(--font-mono); font-size: 13.5px; letter
   .nav__menu { display: none; }
   /* 顶栏只留品牌、外观与汉堡；语言切换挪进抽屉 */
   .nav__actions .lang { display: none; }
+  /* 配色也收进抽屉（抽屉里已有 accent-row），避免顶栏挤成三颗按钮 */
+  .nav__actions .accent-btn { display: none; }
   .drawer__actions { display: flex; }
   .burger { display: grid; }
   .section { padding: 78px 0; }

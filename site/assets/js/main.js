@@ -182,6 +182,64 @@
     else if (mq.addListener) mq.addListener(onSystemChange);
   }
 
+  /* ------------------------------------------------------------------------
+     1c. 配色预设 / Accent presets
+     ------------------------------------------------------------------------
+     与明暗主题正交：data-theme 管底色和文字，data-accent 只管强调色。
+     四套循环：青蓝（默认）→ 竞技红 → 荧光绿 → 霓虹紫。
+     默认青色不写属性，直接沿用 :root，避免多一层覆盖。
+     ======================================================================== */
+  var ACCENT_KEY = 'jb-accent';
+  var ACCENTS = ['cyan', 'crimson', 'lime', 'violet'];
+  var accent = 'cyan';
+
+  function readAccent() {
+    try {
+      var a = localStorage.getItem(ACCENT_KEY);
+      if (ACCENTS.indexOf(a) >= 0) return a;
+    } catch (e) { /* 隐私模式下忽略 */ }
+    return 'cyan';
+  }
+  accent = readAccent();
+
+  function accentLabelCn(t) {
+    return { cyan: '青蓝', crimson: '竞技红', lime: '荧光绿', violet: '霓虹紫' }[t] || t;
+  }
+  function accentLabelEn(t) {
+    return { cyan: 'Cyan', crimson: 'Crimson', lime: 'Lime', violet: 'Violet' }[t] || t;
+  }
+
+  function applyAccent(next) {
+    accent = ACCENTS.indexOf(next) >= 0 ? next : 'cyan';
+
+    if (accent === 'cyan') document.documentElement.removeAttribute('data-accent');
+    else document.documentElement.setAttribute('data-accent', accent);
+
+    try { localStorage.setItem(ACCENT_KEY, accent); } catch (e) { /* 忽略 */ }
+
+    $$('.accent-btn').forEach(function (b) {
+      b.setAttribute('data-accent-now', accent);
+      b.setAttribute('aria-label', pick({
+        cn: '配色：' + accentLabelCn(accent) + '（点击切换）',
+        en: 'Palette: ' + accentLabelEn(accent) + ' (click to cycle)'
+      }));
+      b.setAttribute('title', b.getAttribute('aria-label'));
+    });
+    $$('[data-i18n-accent]').forEach(function (el) {
+      var v = pick({
+        cn: '配色：' + accentLabelCn(accent),
+        en: 'Palette：' + accentLabelEn(accent)
+      });
+      if (v) el.textContent = v;
+    });
+  }
+  window.JB_applyAccent = applyAccent;
+  window.JB_accent = function () { return accent; };
+
+  function cycleAccent() {
+    applyAccent(ACCENTS[(ACCENTS.indexOf(accent) + 1) % ACCENTS.length]);
+  }
+
   /* ========================================================================
      2. 语言切换 / Language switching
      ======================================================================== */
@@ -280,6 +338,9 @@
             '<button class="lang__btn' + (lang === 'cn' ? ' is-on' : '') + '" data-l="cn" type="button" aria-pressed="' + (lang === 'cn') + '">CN</button>' +
             '<button class="lang__btn' + (lang === 'en' ? ' is-on' : '') + '" data-l="en" type="button" aria-pressed="' + (lang === 'en') + '">EN</button>' +
           '</div>' +
+          '<button class="accent-btn" type="button" aria-label="Palette" data-accent-now="' + accent + '">' +
+            '<span class="accent-btn__dot" aria-hidden="true"></span>' +
+          '</button>' +
           '<button class="theme-btn" type="button" aria-label="Appearance">' +
             '<span class="theme-btn__glyph">' + I.auto + I.sun + I.moon + '</span>' +
           '</button>' +
@@ -296,13 +357,14 @@
     drawer.id = 'site-drawer';
     drawer.innerHTML =
       drawerLinks +
-      /* 移动端把语言与主题放进抽屉，避免顶栏挤成一团 */
+      /* 移动端把语言、配色与主题放进抽屉，避免顶栏挤成一团 */
       '<div class="drawer__actions">' +
         '<div class="lang" data-lang="' + lang + '" role="group" aria-label="Language">' +
           '<span class="lang__pill" aria-hidden="true"></span>' +
           '<button class="lang__btn' + (lang === 'cn' ? ' is-on' : '') + '" data-l="cn" type="button" aria-pressed="' + (lang === 'cn') + '">CN</button>' +
           '<button class="lang__btn' + (lang === 'en' ? ' is-on' : '') + '" data-l="en" type="button" aria-pressed="' + (lang === 'en') + '">EN</button>' +
         '</div>' +
+        '<button class="theme-row accent-row" type="button" data-i18n-accent>Palette</button>' +
         '<button class="theme-row" type="button" data-i18n-theme>Appearance</button>' +
       '</div>';
     document.body.appendChild(drawer);
@@ -312,12 +374,17 @@
     host.addEventListener('click', function (e) {
       var langBtn = e.target.closest && e.target.closest('.lang__btn');
       if (langBtn) { applyLang(langBtn.getAttribute('data-l')); return; }
+      var accentBtn = e.target.closest && e.target.closest('.accent-btn');
+      if (accentBtn) { cycleAccent(); return; }
       var themeBtn = e.target.closest && e.target.closest('.theme-btn');
       if (themeBtn) cycleTheme();
     });
     drawer.addEventListener('click', function (e) {
       var langBtn = e.target.closest && e.target.closest('.lang__btn');
       if (langBtn) { applyLang(langBtn.getAttribute('data-l')); return; }
+      /* accent-row 同时带 theme-row 类以复用样式，所以必须先判断 */
+      var accentRow = e.target.closest && e.target.closest('.accent-row');
+      if (accentRow) { cycleAccent(); return; }
       var themeRow = e.target.closest && e.target.closest('.theme-row');
       if (themeRow) cycleTheme();
     });
@@ -785,6 +852,51 @@
   }
 
   /* ========================================================================
+     11b. 控制台彩蛋 / Console easter egg
+     ------------------------------------------------------------------------
+     只有打开开发者工具才看得见，不占页面空间、不参与渲染、零性能开销。
+     娱乐向战队，给好奇的人留一个入口。
+     ======================================================================== */
+  function consoleEgg() {
+    /* verify.js 在 Node 沙箱里逐页执行本脚本，不静音的话每次都会刷一遍 */
+    if (window.__JB_TEST__) return;
+    if (typeof console === 'undefined' || !console.log) return;
+
+    var mark = 'background:linear-gradient(115deg,#22d3ee,#6366f1);color:#04121a;' +
+               'font-weight:700;padding:3px 9px;border-radius:4px';
+    var dim = 'color:#6b7a9c';
+    var hot = 'color:#22d3ee;font-weight:600';
+
+    console.log(
+      '%c TEAM JBYangC %c  2024.11 —\n\n' +
+      '  并肩开黑的普通玩家。\n\n' +
+      '  你在翻控制台，说明有点耐心。这站也确实没有任何埋点、\n' +
+      '  没有第三方请求，素材全在本地。放心看。\n\n' +
+      '  列出全部队员：%cjb()%c\n' +
+      '  想来看看我们：follow.html\n',
+      mark, dim, hot, dim
+    );
+
+    /* 控制台里输入 jb() 列出在册队员 —— 纯 ES5，不影响任何东西 */
+    try {
+      window.jb = function () {
+        var roster = (window.JB && window.JB.ROSTER) || [];
+        var i, p, handle, role, num, lines = [];
+        for (i = 0; i < roster.length; i++) {
+          p = roster[i];
+          handle = String(p.handle || p.id || '');
+          while (handle.length < 11) handle += ' ';
+          role = (p.role && (p.role.cn || p.role)) || '';
+          num = (i + 1) < 10 ? ' ' + (i + 1) : String(i + 1);
+          lines.push('  ' + num + '. ' + handle + role);
+        }
+        console.log('%c在册队员 %c' + roster.length + ' 人\n\n' + lines.join('\n'), mark, dim);
+        return '共 ' + roster.length + ' 人';
+      };
+    } catch (e) { /* 忽略：彩蛋挂了不该影响站点 */ }
+  }
+
+  /* ========================================================================
      11. 通用渲染器 / Shared renderers
      ------------------------------------------------------------------------
      供各页面复用，避免同一段 HTML 在多处重复维护。
@@ -920,6 +1032,8 @@
     buildNav();
     buildFooter();
     applyLang(lang);
+    /* 导航已构建，此时才能更新配色按钮的 aria-label */
+    applyAccent(accent);
 
     initReveal();
     initCounters();
@@ -927,6 +1041,7 @@
     initVideos();
     initImageFallback();
     initLightbox();
+    consoleEgg();
 
     /* 页面首帧淡入，避免样式未就绪时的闪动 */
     document.body.classList.add('is-ready');
