@@ -1,33 +1,104 @@
 ---
 /* ==========================================================================
-   最小布局 / Minimal layout
+   全站布局 / Site layout
    --------------------------------------------------------------------------
-   这一步只为了验证 Astro 构建管道能跑通（npm install && npm run build）。
-   正式的布局会在后续步骤补齐，需要带上：
-     · SEO 与 Open Graph（现有 index.html 里那套）
-     · 主题防闪内联脚本（data-theme + data-accent）
-     · 导航与页脚组件
-     · 双语切换
+   这一版是「过渡形态」：结构、SEO、主题防闪都按 Astro 的方式做好，
+   但导航/页脚/双语仍由旧站的 data.js + main.js 注入，先把观感对齐。
+
+   后续会逐步替换：
+     · 导航与页脚 → 独立的 .astro 组件（内容直接出现在 HTML 里）
+     · data.js    → 构建期 TypeScript 模块（不再下发 27 KB 给客户端）
+     · 双语       → 保留 localStorage 方案，但文案集中到 src/i18n/
    ========================================================================== */
 interface Props {
   title: string;
   description?: string;
+  /** 用于 og:url，默认取当前路径 */
+  ogUrl?: string;
+  /** 用于 og:image，必须是绝对地址才能被社交平台抓取 */
+  ogImage?: string;
 }
 
-const { title, description = '' } = Astro.props;
+const {
+  title,
+  description = '',
+  ogUrl = Astro.url.pathname,
+  ogImage = '/assets/media/og-cover.jpg',
+} = Astro.props;
+
+/* 站点根地址。换域名时只改这一处（对应旧站的 _build/set-domain.py）。 */
+const SITE = 'https://remilia-scarlet-jpg.github.io/jbyangc-site';
+
+const absUrl = new URL(ogUrl, SITE).href;
+const absImage = new URL(ogImage, SITE).href;
 ---
 <!DOCTYPE html>
-<html lang="zh-CN" data-lang="cn">
+<html lang="zh-CN" class="no-js" data-lang="cn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  <meta name="theme-color" content="#05070d" />
   <link rel="icon" type="image/webp" href="/assets/media/队伍徽章/队徽（简洁）.webp" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TEAM JBYangC" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={absUrl} />
+  <meta property="og:image" content={absImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  {/* 主题防闪：必须内联且同步，在样式表之前执行。
+      Astro 默认会把 <script> 打包延迟执行，is:inline 才能保持这个时机。 */}
+  <script is:inline>
+    (function () {
+      var a = 'dark', m = 'auto', p = '';
+      try {
+        m = localStorage.getItem('jb-theme') || 'auto';
+        if (m === 'light' || m === 'dark') {
+          a = m;
+        } else {
+          m = 'auto';
+          a = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+        }
+        p = localStorage.getItem('jb-accent') || '';
+      } catch (e) { /* 隐私模式：按深色渲染 */ }
+      document.documentElement.setAttribute('data-theme', a);
+      document.documentElement.setAttribute('data-theme-mode', m);
+      if (p && p !== 'cyan') document.documentElement.setAttribute('data-accent', p);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
-  <main>
+
+  <div class="ambient" aria-hidden="true">
+    <span class="ambient__glow ambient__glow--a"></span>
+    <span class="ambient__glow ambient__glow--b"></span>
+    <span class="ambient__glow ambient__glow--c"></span>
+    <span class="ambient__grid"></span>
+    <span class="ambient__vignette"></span>
+  </div>
+
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">跳到主要内容</a>
+
+  {/* 导航与页脚仍由 main.js 注入，占位元素必须保留 */}
+  <header id="site-nav"></header>
+
+  <main class="page" id="main">
     <slot />
   </main>
+
+  <footer id="site-footer"></footer>
+
+  {/* is:inline：这两个文件在 public\ 下，不需要 Astro 处理 */}
+  <script is:inline src="/assets/js/data.js"></script>
+  <script is:inline src="/assets/js/main.js"></script>
 </body>
 </html>
