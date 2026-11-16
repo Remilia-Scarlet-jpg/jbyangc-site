@@ -1,0 +1,33 @@
+---
+/* ==========================================================================
+   最小布局 / Minimal layout
+   --------------------------------------------------------------------------
+   这一步只为了验证 Astro 构建管道能跑通（npm install && npm run build）。
+   正式的布局会在后续步骤补齐，需要带上：
+     · SEO 与 Open Graph（现有 index.html 里那套）
+     · 主题防闪内联脚本（data-theme + data-accent）
+     · 导航与页脚组件
+     · 双语切换
+   ========================================================================== */
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = '' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="cn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="icon" type="image/webp" href="/assets/media/队伍徽章/队徽（简洁）.webp" />
+</head>
+<body>
+  <main>
+    <slot />
+  </main>
+</body>
+</html>

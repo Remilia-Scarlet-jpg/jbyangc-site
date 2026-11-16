@@ -20,6 +20,12 @@ __pycache__/
 .venv/
 venv/
 
+# ---- Astro 项目（app/）----
+# 依赖与构建产物不入库；app/ 的源码要入库
+app/node_modules/
+app/dist/
+app/.astro/
+
 # ---- 编辑器 / 系统 ----
 .vscode/
 .idea/
