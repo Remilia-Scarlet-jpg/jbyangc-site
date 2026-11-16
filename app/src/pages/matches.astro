@@ -1,0 +1,217 @@
+---
+/* ==========================================================================
+   赛事记录 / Match records
+   --------------------------------------------------------------------------
+   表格与汇总都由客户端从 data.js 的 MATCHES 渲染。
+   没有数据时留 5 行占位并把 tbody 调暗，让表格结构仍然可见 —— 这是原站的
+   设计，搬过来时保持原样。
+   ========================================================================== */
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="赛事记录 | TEAM JBYangC"
+  description="TEAM JBYangC 的赛事与对局记录。作为娱乐向战队，我们的记录以队内对局与友谊赛为主。"
+>
+
+  <section class="section" style="padding-top:calc(var(--nav-h) + 78px);padding-bottom:44px">
+    <div class="shell">
+      <div class="section__head" style="max-width:840px">
+        <div class="eyebrow reveal" data-i18n="mt.eyebrow">Match records</div>
+        <h1 class="section__title reveal" style="--d:80ms;font-size:clamp(34px,5.4vw,58px)" data-i18n="mt.title">
+          赛事记录
+        </h1>
+        <p class="section__lede reveal" style="--d:160ms" data-i18n="mt.lede">
+          作为一支娱乐向战队，我们不以赛事成绩为核心目标，记录以队内对局与友谊赛为主。
+          这份表格是留给日后的 —— 有值得记下来的对局，就填进来。
+        </p>
+      </div>
+
+      {/* 汇总数据 */}
+      <div class="facts reveal" style="--d:200ms;max-width:900px" id="mt-facts"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="shell">
+
+      <div class="table-wrap reveal">
+        <div class="table-scroll">
+          <table class="data" id="mt-table">
+            <thead>
+              <tr>
+                <th data-i18n="mt.colDate">日期</th>
+                <th data-i18n="mt.colEvent">赛事</th>
+                <th data-i18n="mt.colOpponent">对手</th>
+                <th data-i18n="mt.colScore">比分</th>
+                <th data-i18n="mt.colMap">地图</th>
+                <th data-i18n="mt.colResult">结果</th>
+              </tr>
+            </thead>
+            <tbody id="mt-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--divide" style="padding-top:0">
+    <div class="shell">
+      <div class="section__head">
+        <div class="eyebrow reveal" data-i18n="mt.howEyebrow">How we record</div>
+        <h2 class="section__title reveal" style="--d:80ms" data-i18n="mt.howTitle">我们怎么记录对局</h2>
+      </div>
+
+      <div class="grid grid--3" data-stagger="100">
+        <article class="card reveal">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M9 20h6M12 15v5"/></svg>
+          </div>
+          <h3 class="card__title" data-i18n="mt.h1t">不记排名</h3>
+          <p class="card__text" data-i18n="mt.h1d">
+            我们不统计段位与积分。记录的意义是留下打过的对手和赢下来的瞬间，
+            而不是把队员放在一个排行榜上比较。
+          </p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          </div>
+          <h3 class="card__title" data-i18n="mt.h2t">只记值得记的</h3>
+          <p class="card__text" data-i18n="mt.h2d">
+            队内对抗、友谊赛、临时凑的五排，只要打完大家都觉得有意思，
+            就值得在表格里占一行。
+          </p>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16M17 4v16M2 9h5M2 15h5M17 9h5M17 15h5"/></svg>
+          </div>
+          <h3 class="card__title" data-i18n="mt.h3t">片段一起归档</h3>
+          <p class="card__text" data-i18n="mt.h3d">
+            记录里的对局如果有录像或片段，会一并归档到素材库，
+            以后翻出来还能看当时的操作。
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="scripts">
+    <script is:inline>
+    (function () {
+      'use strict';
+      var JB = window.JB;
+
+      /* esc() 由 assets/js/main.js 统一提供（window.JB_UI.esc），此处不再重复定义 */
+      var esc = window.JB_UI.esc;
+
+      /* 按日期倒序，最新的在最上面 */
+      function sorted() {
+        return JB.MATCHES.slice().sort(function (a, b) {
+          return String(b.date || '').localeCompare(String(a.date || ''));
+        });
+      }
+
+      function renderBody() {
+        var body = document.getElementById('mt-body');
+        var rows = sorted();
+
+        /* 没有数据时留出占位行，让表格结构仍然完整可见 */
+        if (!rows.length) {
+          var placeholders = [0, 1, 2, 3, 4];
+          body.innerHTML = placeholders.map(function () {
+            return '<tr>' +
+                     '<td class="cell-mono">' + JB_UI.pick({ cn: '待补充', en: 'Pending' }) + '</td>' +
+                     '<td>—</td><td>—</td><td class="cell-mono">— : —</td><td>—</td>' +
+                     '<td><span class="tag tag--friendly">' + JB_UI.pick({ cn: '占位', en: 'PLACEHOLDER' }) + '</span></td>' +
+                   '</tr>';
+          }).join('');
+          body.style.opacity = '.42';
+          return;
+        }
+
+        body.style.opacity = '';
+        body.innerHTML = rows.map(function (m) {
+          var res = m.result || 'friendly';
+          var resText = JB_UI.pick(JB.MATCH_RESULTS[res] || JB.MATCH_RESULTS.friendly);
+          return '<tr>' +
+                   '<td class="cell-mono">' + esc(m.date || '') + '</td>' +
+                   '<td class="cell-strong">' + esc(JB_UI.pick(m.event)) + '</td>' +
+                   '<td>' + esc(m.opponent || '') + '</td>' +
+                   '<td class="cell-mono cell-strong">' + esc(m.score || '') + '</td>' +
+                   '<td>' + esc(m.map || '') + '</td>' +
+                   '<td><span class="tag tag--' + esc(res) + '">' + esc(resText) + '</span></td>' +
+                 '</tr>';
+        }).join('');
+      }
+
+      function renderFacts() {
+        var rows = sorted();
+        var team = JB.ROSTER.length;
+        var wins = rows.filter(function (m) { return m.result === 'win'; }).length;
+        var played = rows.length;
+
+        var cells = [
+          { k: { cn: '在册队员', en: 'On roster' },        v: String(team) },
+          { k: { cn: '已归档对局', en: 'Logged matches' }, v: String(played) },
+          { k: { cn: '胜场', en: 'Wins' },                 v: String(wins) },
+          { k: { cn: '建队时间', en: 'Founded' },          v: '2024.11' }
+        ];
+
+        document.getElementById('mt-facts').innerHTML = cells.map(function (c) {
+          return '<div class="facts__cell">' +
+                   '<div class="facts__k">' + esc(JB_UI.pick(c.k)) + '</div>' +
+                   '<div class="facts__v">' + esc(c.v) + '</div>' +
+                 '</div>';
+        }).join('');
+      }
+
+      window.JB_I18N = window.JB_I18N || {};
+      Object.assign(window.JB_I18N, {
+        'mt.eyebrow': { cn: 'Match records', en: 'Match records' },
+        'mt.title': { cn: '赛事记录', en: 'Match records' },
+        'mt.lede': {
+          cn: '作为一支娱乐向战队，我们不以赛事成绩为核心目标，记录以队内对局与友谊赛为主。这份表格是留给日后的 —— 有值得记下来的对局，就填进来。',
+          en: 'As a casual team, tournament results are not our focus — our records are mostly internal scrims and friendly matches. This table is here for later: when a game is worth remembering, it goes in.'
+        },
+        'mt.hint': {
+          cn: '表格目前没有数据。要添加一条记录，打开 assets/js/data.js，在 MATCHES 数组里按注释里的格式复制一行，填入日期、赛事、对手、比分、地图与结果（win / loss / friendly）即可，页面会自动按日期倒序排列。',
+          en: 'The table is currently empty. To add a record, open assets/js/data.js, copy a line inside the MATCHES array following the commented template, and fill in date, event, opponent, score, map and result (win / loss / friendly). Rows are sorted by date automatically.'
+        },
+        'mt.colDate': { cn: '日期', en: 'Date' },
+        'mt.colEvent': { cn: '赛事', en: 'Event' },
+        'mt.colOpponent': { cn: '对手', en: 'Opponent' },
+        'mt.colScore': { cn: '比分', en: 'Score' },
+        'mt.colMap': { cn: '地图', en: 'Map' },
+        'mt.colResult': { cn: '结果', en: 'Result' },
+        'mt.howEyebrow': { cn: 'How we record', en: 'How we record' },
+        'mt.howTitle': { cn: '我们怎么记录对局', en: 'How we keep records' },
+        'mt.h1t': { cn: '不记排名', en: 'No rankings' },
+        'mt.h1d': {
+          cn: '我们不统计段位与积分。记录的意义是留下打过的对手和赢下来的瞬间，而不是把队员放在一个排行榜上比较。',
+          en: 'We do not track ranks or rating points. A record is for remembering who we played and what we won — not for putting teammates on a leaderboard.'
+        },
+        'mt.h2t': { cn: '只记值得记的', en: 'Only what matters' },
+        'mt.h2d': {
+          cn: '队内对抗、友谊赛、临时凑的五排，只要打完大家都觉得有意思，就值得在表格里占一行。',
+          en: 'Internal scrims, friendlies, even a pickup five — if everyone enjoyed it, it earns a row in the table.'
+        },
+        'mt.h3t': { cn: '片段一起归档', en: 'Clips archived too' },
+        'mt.h3d': {
+          cn: '记录里的对局如果有录像或片段，会一并归档到素材库，以后翻出来还能看当时的操作。',
+          en: 'If a logged match has a demo or a clip, it goes into the media library, so the plays are still there to watch later.'
+        }
+      });
+
+      renderBody();
+      renderFacts();
+
+      window.JB_onLang = window.JB_onLang || [];
+      window.JB_onLang.push(function () { renderBody(); renderFacts(); });
+    })();
+    </script>
+  </Fragment>
+
+</BaseLayout>
