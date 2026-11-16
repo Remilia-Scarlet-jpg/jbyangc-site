@@ -5,5 +5,5 @@ Disallow: /test.html
 # join.html 只是旧链接的跳转页，无内容
 Disallow: /join.html
 
-# 站点上线后，把下面这行的域名换成你自己的，并去掉注释符
-# Sitemap: https://example.com/sitemap.xml
+# 域名由 _build/set-domain.py 统一替换
+Sitemap: __SITE_URL__/sitemap.xml
